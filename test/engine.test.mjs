@@ -207,3 +207,23 @@ test('curve fitting keeps outlines close to the sampled shape', () => {
     assert.ok(segments < 160, `${name} uses ${segments} segments — fitting is not compressing`);
   }
 });
+
+test('serifs stay proportionate and never fuse with the neighbours', () => {
+  for (const contrast of [0, 55, 100]) {
+    const font = generateFont(project({ weight: 55, contrast, serifMode: true }));
+    for (const [a, b] of [['a', 'm'], ['m', 'l'], ['n', 'n'], ['H', 'I']]) {
+      const ga = font.glyphs.get(a), gb = font.glyphs.get(b);
+      const kern = font.kerning[`${a}|${b}`] || 0;
+      const gap = (ga.advance - ga.bbox.xMax) + gb.bbox.xMin + kern;
+      assert.ok(gap >= 15, `${a}${b} serifs touch at contrast ${contrast} (gap ${gap.toFixed(0)})`);
+    }
+    // Inside the m, the serifs of neighbouring stems must leave a visible gap.
+    const m = font.glyphs.get('m');
+    const feet = m.contours
+      .map((c) => ({ x0: Math.min(...c.map((p) => p.x)), x1: Math.max(...c.map((p) => p.x)), y1: Math.max(...c.map((p) => p.y)) }))
+      .filter((c) => c.y1 < 120)
+      .sort((p, q) => p.x0 - q.x0);
+    assert.equal(feet.length, 3, 'm should have three foot serifs');
+    for (let i = 1; i < feet.length; i++) assert.ok(feet[i].x0 - feet[i - 1].x1 > 60, 'serifs inside m are fusing');
+  }
+});
