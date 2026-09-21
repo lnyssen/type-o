@@ -1,0 +1,25 @@
+{
+  "name": "gentype",
+  "version": "0.1.0",
+  "description": "Open-source generative typography: parametric skeletons to production fonts (.ttf, .otf, .woff).",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k -n api,web \"node --watch server/index.js\" \"vite\"",
+    "build": "vite build",
+    "start": "NODE_ENV=production node server/index.js",
+    "setup:python": "python3 -m venv server/.venv && server/.venv/bin/pip install -r server/python/requirements.txt",
+    "test": "node --test test/*.test.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "express": "^5.2.1",
+    "p5": "^2.3.3"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.5",
+    "vite": "^8.3.0"
+  }
+}
