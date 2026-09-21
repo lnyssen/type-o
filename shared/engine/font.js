@@ -155,7 +155,10 @@ function buildBase(name, sk, kind, D, quality, gkey) {
   return cachedBuild(`${gkey}|${name}|${skKey}`, () => {
     const g = buildGlyph(name, sk, kind, D, { quality });
     const bbox = contoursBounds(g.contours);
-    return { ...g, bbox, profile: bbox ? computeProfile(g.contours, bbox) : null };
+    const bodyBBox = g.serifCount ? contoursBounds(g.body) : bbox;
+    const profile = bbox ? computeProfile(g.contours, bbox) : null;
+    const bodyProfile = g.serifCount && bodyBBox ? computeProfile(g.body, bodyBBox) : profile;
+    return { ...g, bbox, profile, bodyBBox, bodyProfile };
   });
 }
 
@@ -199,16 +202,22 @@ export function generateFont(project, opts = {}) {
       glyphs.set(g.name, { ...g, contours: [], advance: spaceAdvance, lsb: 0, bbox: null, profile: null });
       continue;
     }
-    const band = spacingBand(g.kind, r.bbox, D.m);
+    // Space the letter's body; serifs may reach into the sidebearings but
+    // always keep a clear gap to the neighbour's serifs.
+    const body = r.bodyBBox;
+    const band = spacingBand(g.kind, body, D.m);
     const base = baseSpacing(g.kind, D);
-    const { lsb, rsb } = autoSidebearings(r.profile, r.bbox, band, base, depth);
-    const dx = lsb - r.bbox.xMin;
-    const width = r.bbox.xMax - r.bbox.xMin;
+    let { lsb, rsb } = autoSidebearings(r.bodyProfile, body, band, base, depth);
+    const minGap = base * 0.3;
+    lsb = Math.max(lsb, body.xMin - r.bbox.xMin + minGap);
+    rsb = Math.max(rsb, r.bbox.xMax - body.xMax + minGap);
+    const dx = lsb - body.xMin;
     glyphs.set(g.name, {
       ...g,
       contours: translateContours(r.contours, dx, 0),
-      advance: Math.round(lsb + width + rsb),
-      lsb,
+      advance: Math.round(lsb + (body.xMax - body.xMin) + rsb),
+      lsb: r.bbox.xMin + dx,
+      dx,
       bbox: { ...r.bbox, xMin: r.bbox.xMin + dx, xMax: r.bbox.xMax + dx },
       profile: r.profile,
       rawBBox: r.bbox,
@@ -238,6 +247,7 @@ export function generateFont(project, opts = {}) {
         contours: translateContours(contours, dx, 0),
         advance: Math.round(bbox.xMax - bbox.xMin + 2 * base),
         lsb: dx,
+        dx,
         bbox: { ...bbox, xMin: bbox.xMin + dx, xMax: bbox.xMax + dx },
         profile: computeProfile(contours, bbox),
         rawBBox: bbox,
@@ -247,7 +257,7 @@ export function generateFont(project, opts = {}) {
       continue;
     }
     const [mx, my] = placeMark(baseRaw, mk, mode, D, g.mark);
-    const dx = baseG.lsb - baseRaw.bbox.xMin;
+    const dx = baseG.dx;
     const markContours = translateContours(mk.contours, mx + dx, my);
     const contours = [...baseG.contours, ...markContours];
     const bbox = contoursBounds(contours);
@@ -264,6 +274,7 @@ export function generateFont(project, opts = {}) {
       band: baseG.band,
       baseSpacing: baseG.baseSpacing,
       kernGroup: g.base,
+      dx,
     });
   }
 

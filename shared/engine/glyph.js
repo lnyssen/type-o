@@ -150,8 +150,10 @@ export function buildGlyph(name, skeleton, kind, D, opts = {}) {
       return o.sampled.runs.some((run) => run.some((q) => dist(q, p) < tol));
     });
 
-  // 5. outline.
+  // 5. outline. Serifs are kept apart so spacing can be measured on the
+  // letter's body: serif tips reach into the sidebearings, as in real type.
   const contours = [];
+  const serifs = [];
   const noiseSeed = hashString(name + '#w', D.p.seed);
   for (const pr of prepared) {
     const { s } = pr;
@@ -193,16 +195,20 @@ export function buildGlyph(name, skeleton, kind, D, opts = {}) {
       return Math.max(w, 2);
     };
 
+    // Serif proportions follow the contrast: slab-like (thick, no bracket)
+    // when monoline, hairline with a generous bracket when high-contrast.
+    const serifLen = stem * 0.34 + 6;
     const serifGeom = {
-      h: stem * (0.25 + 0.3 * D.thinRatio),
-      len: stem * 0.45 + 22,
-      br: stem * 0.3 * (0.4 + D.contrast),
+      h: stem * Math.max(0.12, 0.5 * D.thinRatio),
+      len: serifLen,
+      br: Math.min(serifLen * 0.8, stem * 0.28 * D.contrast),
       arcSteps: Q.arcSteps,
     };
     const out = outlineStroke(sampled, { widthAt, terminal: D.p.terminals, arcSteps: Q.arcSteps, ends, serif: serifGeom });
-    contours.push(...out.contours, ...out.serifs);
+    contours.push(...out.contours);
+    serifs.push(...out.serifs);
   }
-  return { name, kind, contours };
+  return { name, kind, contours: [...contours, ...serifs], body: contours, serifCount: serifs.length };
 }
 
 export function contoursBounds(contours) {

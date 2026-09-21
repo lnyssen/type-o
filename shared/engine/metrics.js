@@ -75,7 +75,7 @@ export function sideDistances(g, grid) {
   const right = new Float64Array(grid.n).fill(NaN);
   const left = new Float64Array(grid.n).fill(NaN);
   const { y0, L, R } = g.profile;
-  const dx = g.lsb - g.bbox.xMin;
+  const dx = g.dx ?? 0; // profiles are stored unshifted
   for (let k = 0; k < L.length; k++) {
     const gk = Math.round((y0 - grid.y0) / PROFILE_STEP) + k;
     if (gk < 0 || gk >= grid.n || Number.isNaN(L[k])) continue;
