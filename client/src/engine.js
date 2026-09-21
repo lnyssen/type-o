@@ -29,6 +29,15 @@ worker.onmessage = ({ data }) => {
   if (queued) { queued = false; regenerate(); }
 };
 
+// A worker that fails to boot (a bad build, a blocked module) would otherwise
+// leave the app stuck on "Generating…".
+worker.onerror = (event) => {
+  pendingId = null;
+  queued = false;
+  state.generating = false;
+  emit('font-error', event.message || 'the generation worker could not start');
+};
+
 export function regenerate() {
   if (pendingId !== null) { queued = true; return; }
   pendingId = nextId++;
