@@ -74,7 +74,7 @@ export function derive(params, metrics) {
   const m = normalizeMetrics(metrics);
   const stem = 18 + p.weight * 1.45; // lowercase vertical stem, font units
   // Heavy weights get a little built-in contrast so bars and counters stay open.
-  const contrast = p.contrast / 100 + (1 - p.contrast / 100) * 0.22 * (p.weight / 100) ** 2;
+  const contrast = p.contrast / 100 + (1 - p.contrast / 100) * 0.36 * (p.weight / 100) ** 2;
   return {
     p,
     m,
@@ -86,7 +86,7 @@ export function derive(params, metrics) {
     modulation: p.modulation / 100,
     widthFactor: WIDTH_FACTOR[p.width],
     // Wider skeletons as weight grows keeps counters open.
-    xScale: WIDTH_FACTOR[p.width] * (1 + (stem - 83) / 330),
+    xScale: WIDTH_FACTOR[p.width] * (1 + (stem - 83) / 480),
     overshoot: Math.round(m.xHeight * 0.014),
     spacing: m.spacing / 100,
   };

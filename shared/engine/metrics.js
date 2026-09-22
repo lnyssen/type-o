@@ -56,17 +56,32 @@ export function baseSpacing(kind, D) {
   return lower;
 }
 
+// Horizontal extent of the ink inside the spacing band. Parts outside it
+// (the hook of j, the flag of f, the tail of y) are allowed to overhang the
+// sidebearings, as they do in real type.
+export function bandExtent(profile, band) {
+  let left = Infinity, right = -Infinity;
+  eachBin(profile, band, (k) => {
+    if (Number.isNaN(profile.L[k])) return;
+    left = Math.min(left, profile.L[k]);
+    right = Math.max(right, profile.R[k]);
+  });
+  return left === Infinity ? null : { left, right };
+}
+
+// Sidebearings measured from the band extent (see bandExtent).
 export function autoSidebearings(profile, bb, band, base, depth) {
+  const ext = bandExtent(profile, band) || { left: bb.xMin, right: bb.xMax };
   let wl = 0, wr = 0, n = 0;
   eachBin(profile, band, (k) => {
     n++;
     const l = profile.L[k], r = profile.R[k];
-    wl += Number.isNaN(l) ? depth : Math.min(l - bb.xMin, depth);
-    wr += Number.isNaN(r) ? depth : Math.min(bb.xMax - r, depth);
+    wl += Number.isNaN(l) ? depth : Math.min(l - ext.left, depth);
+    wr += Number.isNaN(r) ? depth : Math.min(ext.right - r, depth);
   });
-  if (!n) return { lsb: base, rsb: base };
+  if (!n) return { lsb: base, rsb: base, ...ext };
   const floor = base * 0.2;
-  return { lsb: Math.max(floor, base - wl / n), rsb: Math.max(floor, base - wr / n) };
+  return { lsb: Math.max(floor, base - wl / n), rsb: Math.max(floor, base - wr / n), ...ext };
 }
 
 // Distances from the advance box edges to the ink, per bin, in a shared

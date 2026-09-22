@@ -6,7 +6,7 @@ import { BASE, MARKS, COMPOSITES, ALIASES, compositeName } from '../glyphs/latin
 import { parseSkeleton, rotate180, translateSkeleton, skeletonBounds } from './skeleton.js';
 import { derive } from './params.js';
 import { buildGlyph, contoursBounds, translateContours } from './glyph.js';
-import { computeProfile, spacingBand, baseSpacing, autoSidebearings, sideDistances, pairKerning, PROFILE_STEP, KERN_LEFT, KERN_RIGHT } from './metrics.js';
+import { computeProfile, spacingBand, baseSpacing, autoSidebearings, bandExtent, sideDistances, pairKerning, PROFILE_STEP, KERN_LEFT, KERN_RIGHT } from './metrics.js';
 
 // ---------------------------------------------------------------------------
 // Glyph catalogue
@@ -207,15 +207,20 @@ export function generateFont(project, opts = {}) {
     const body = r.bodyBBox;
     const band = spacingBand(g.kind, body, D.m);
     const base = baseSpacing(g.kind, D);
-    let { lsb, rsb } = autoSidebearings(r.bodyProfile, body, band, base, depth);
-    const minGap = base * 0.3;
-    lsb = Math.max(lsb, body.xMin - r.bbox.xMin + minGap);
-    rsb = Math.max(rsb, r.bbox.xMax - body.xMax + minGap);
-    const dx = lsb - body.xMin;
+    let { lsb, rsb, left, right } = autoSidebearings(r.bodyProfile, body, band, base, depth);
+    if (r.serifCount) {
+      const full = bandExtent(r.profile, band);
+      const minGap = base * 0.3;
+      if (full) {
+        lsb = Math.max(lsb, left - full.left + minGap);
+        rsb = Math.max(rsb, full.right - right + minGap);
+      }
+    }
+    const dx = lsb - left;
     glyphs.set(g.name, {
       ...g,
       contours: translateContours(r.contours, dx, 0),
-      advance: Math.round(lsb + (body.xMax - body.xMin) + rsb),
+      advance: Math.round(lsb + (right - left) + rsb),
       lsb: r.bbox.xMin + dx,
       dx,
       bbox: { ...r.bbox, xMin: r.bbox.xMin + dx, xMax: r.bbox.xMax + dx },

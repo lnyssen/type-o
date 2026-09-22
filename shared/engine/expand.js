@@ -53,14 +53,20 @@ function segIntersect(p1, p2, p3, p4) {
 }
 
 // Cut out the little loops an offset curve makes where the stroke is wider
-// than the curve is tight (swallowtails on the inside of bends).
-function removeLoops(pts, reach = 80) {
+// than the curve is tight (swallowtails on the inside of bends). Only short
+// loops go: a stroke that genuinely crosses itself (&, @) keeps its shape.
+function removeLoops(pts, maxLoop, reach = 80) {
   const out = pts.slice();
   for (let i = 0; i < out.length - 3; i++) {
     const lim = Math.min(out.length - 1, i + reach);
     for (let j = lim - 1; j >= i + 2; j--) {
       const x = segIntersect(out[i], out[i + 1], out[j], out[j + 1]);
-      if (x) { out.splice(i + 1, j - i, x); break; }
+      if (!x) continue;
+      let loop = 0;
+      for (let k = i + 1; k <= j && loop <= maxLoop; k++) loop += dist(out[k], out[k + 1]);
+      if (loop > maxLoop) continue;
+      out.splice(i + 1, j - i, x);
+      break;
     }
   }
   return out;
@@ -122,13 +128,14 @@ export function outlineStroke(sampled, ctx) {
 
   const sides = (run, widths) => {
     const L = [], R = [];
+    const maxLoop = Math.max(...widths) * 3;
     run.forEach((p, i) => {
       const n = perpLeft(p.t);
       const hw = widths[i] / 2;
       L.push({ x: p.x + n.x * hw, y: p.y + n.y * hw });
       R.push({ x: p.x - n.x * hw, y: p.y - n.y * hw });
     });
-    return { L: removeLoops(L), R: removeLoops(R) };
+    return { L: removeLoops(L, maxLoop), R: removeLoops(R, maxLoop) };
   };
 
   if (loop) {
@@ -191,7 +198,7 @@ export function outlineStroke(sampled, ctx) {
     const A1 = add(P, mul(perpLeft(t1), (side * w1) / 2));
     const A2 = add(P, mul(perpLeft(t2), (side * w2) / 2));
     const M = lineIntersect(A1, t1, A2, t2);
-    const limit = 3 * Math.max(w1, w2);
+    const limit = 1.6 * Math.max(w1, w2); // sharper corners get bevelled, not spiked
     const poly = M && dist(M, P) < limit && dot(sub(M, A1), t1) > -1e-6 ? [P, A1, M, A2] : [P, A1, A2];
     if (Math.abs(polyArea(poly)) > 1e-3) contours.push(ccw(poly));
   }
