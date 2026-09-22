@@ -70,7 +70,7 @@ Stroke — how the letters are drawn:
 | **Seed** | Which random variation Modulation uses. Same seed ⇒ identical font, always. |
 | **Serif mode** | Serifs on stem ends: long unbracketed slabs when contrast is low, hairlines with brackets when it is high. |
 
-Nine starting points (`shared/engine/presets.js`) set structure, proportions and dials together: Swiss, Geometric, Humanist, Old style, Didone, Slab, Rounded, Italic, Hand.
+Eleven starting points (`shared/engine/presets.js`) set structure, proportions and dials together: Neo-grotesk, Grotesk, Poster, Geometric, Humanist, Old style, Didone, Slab, Rounded, Italic, Hand.
 
 Vertical metrics (x-height, cap height, ascender, descender) and a global spacing percentage live in the Metrics view; every skeleton follows them.
 

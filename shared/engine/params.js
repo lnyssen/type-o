@@ -3,7 +3,7 @@
 // given project always produces the same font.
 
 export const PARAM_SPEC = {
-  construction: { type: 'enum', options: ['geometric', 'grotesque', 'humanist'], default: 'grotesque', label: 'Construction', hint: 'Letter structure: alternates (a, g, y, t…), round proportions, stress axis, terminal cuts' },
+  construction: { type: 'enum', options: ['geometric', 'grotesque', 'humanist'], default: 'grotesque', label: 'Construction', hint: 'Letter structure: alternates (a, g, y, t…), round proportions, stress axis, terminal cuts', labels: { grotesque: 'Grotesk' } },
   weight: { type: 'range', min: 0, max: 100, default: 45, label: 'Weight', hint: 'Stroke thickness' },
   contrast: { type: 'range', min: 0, max: 100, default: 25, label: 'Contrast', hint: 'Thick / thin ratio (broad-nib stress)' },
   terminals: { type: 'enum', options: ['sharp', 'rounded', 'serif'], default: 'sharp', label: 'Terminals', hint: 'Shape of free stroke ends. Serif = flared ends' },
@@ -74,8 +74,8 @@ const WIDTH_FACTOR = { condensed: 0.8, normal: 1, expanded: 1.22 };
 // What each construction implies beyond its alternates.
 export const CONSTRUCTIONS = {
   geometric: { roundX: 1.06, penAngle: 0, terminalCut: 'perpendicular', aperture: 0.05 },
-  grotesque: { roundX: 0.92, penAngle: 6, terminalCut: 'horizontal', aperture: -0.12 },
-  humanist: { roundX: 0.9, penAngle: 30, terminalCut: 'perpendicular', aperture: 0.2 },
+  grotesque: { roundX: 0.94, penAngle: 6, terminalCut: 'horizontal', aperture: -0.1 },
+  humanist: { roundX: 0.93, penAngle: 30, terminalCut: 'perpendicular', aperture: 0.1 },
 };
 
 // Numbers the geometry actually uses.
@@ -94,7 +94,7 @@ export function derive(params, metrics) {
     roundX: C.roundX,
     terminalCut: C.terminalCut,
     // Fraction of the arc a terminal travels: + opens, − closes.
-    aperture: C.aperture + ((p.aperture - 50) / 50) * 0.35,
+    aperture: C.aperture + ((p.aperture - 50) / 50) * 0.22,
     slant: Math.tan((p.slant * Math.PI) / 180),
     thinRatio: 1 - 0.85 * contrast,
     contrast,

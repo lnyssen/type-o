@@ -1,9 +1,17 @@
 // Starting points that differ in structure and proportions, not just in
 // stroke: each one sets the construction, the metrics and the dials.
 export const PRESETS = {
-  Swiss: {
-    params: { construction: 'grotesque', weight: 52, contrast: 12, terminals: 'sharp', aperture: 22, width: 'normal', tension: 58, modulation: 0, slant: 0, serifMode: false },
-    metrics: { xHeight: 530, capHeight: 720, ascender: 760, descender: -210, spacing: 88 },
+  'Neo-grotesk': {
+    params: { construction: 'grotesque', weight: 50, contrast: 10, terminals: 'sharp', aperture: 12, width: 'normal', tension: 62, modulation: 0, slant: 0, serifMode: false },
+    metrics: { xHeight: 540, capHeight: 720, ascender: 760, descender: -210, spacing: 86 },
+  },
+  Grotesk: {
+    params: { construction: 'grotesque', weight: 55, contrast: 20, terminals: 'sharp', aperture: 30, width: 'normal', tension: 54, modulation: 0, slant: 0, serifMode: false },
+    metrics: { xHeight: 505, capHeight: 710, ascender: 750, descender: -215, spacing: 92 },
+  },
+  Poster: {
+    params: { construction: 'grotesque', weight: 88, contrast: 16, terminals: 'sharp', aperture: 15, width: 'condensed', tension: 70, modulation: 0, slant: 0, serifMode: false },
+    metrics: { xHeight: 570, capHeight: 740, ascender: 770, descender: -190, spacing: 84 },
   },
   Geometric: {
     params: { construction: 'geometric', weight: 44, contrast: 0, terminals: 'sharp', aperture: 60, width: 'normal', tension: 40, modulation: 0, slant: 0, serifMode: false },
