@@ -7,7 +7,9 @@ import { currentSkeleton, previewGlyph, isEdited, editorKind } from '../engine.j
 import { editableGlyphs } from '../../../shared/engine/font.js';
 import { cloneSkeleton, serializeSkeleton, parseSkeleton, validateSkeleton } from '../../../shared/engine/skeleton.js';
 import { strokeToCubics } from '../../../shared/engine/spline.js';
-import { yMapper } from '../../../shared/engine/glyph.js';
+import { yMapper, structureSkeleton } from '../../../shared/engine/glyph.js';
+import { ROUND_GLYPHS } from '../../../shared/glyphs/latin.js';
+import { skeletonBounds } from '../../../shared/engine/skeleton.js';
 import { derive } from '../../../shared/engine/params.js';
 
 const TOOLS = { move: 'Move', insert: 'Insert', pen: 'Pen', erase: 'Erase' };
@@ -284,8 +286,9 @@ export function skeletonView() {
         }
       }
 
-      // skeleton
-      for (const [si, stroke] of sk.strokes.entries()) {
+      // skeleton, as the structural parameters reshape it
+      const shown = structureSkeleton(sk, state.glyphId, editorKind(state.glyphId), D);
+      for (const [si, stroke] of shown.strokes.entries()) {
         if (stroke.nodes.length > 1) {
           const { cubics } = strokeToCubics(mapped(stroke, D, mapY), D.tension);
           s.noFill();
@@ -323,11 +326,15 @@ export function skeletonView() {
       }
     };
 
-    // Design coordinates are what we edit; the canvas shows metric space.
-    const mapNode = (node, D, mapY) => [node.x * D.xScale, mapY(node.y)];
+    // Design coordinates are what we edit; the canvas shows metric space
+    // (zones mapped, width scaled, slanted).
+    const mapNode = (node, D, mapY) => {
+      const y = mapY(node.y);
+      return [node.x * D.xScale + y * D.slant, y];
+    };
     const mapped = (stroke, D, mapY) => ({
       ...stroke,
-      nodes: stroke.nodes.map((n) => ({ ...n, x: n.x * D.xScale, y: mapY(n.y) })),
+      nodes: stroke.nodes.map((n) => { const [x, y] = mapNode(n, D, mapY); return { ...n, x, y }; }),
     });
     const fromScreen = (x, y, D, mapY) => {
       const m = toModel(x, y);
@@ -337,11 +344,18 @@ export function skeletonView() {
         const mid = (lo + hi) / 2;
         if (mapY(mid) < m.y) lo = mid; else hi = mid;
       }
-      return { x: m.x / D.xScale, y: (lo + hi) / 2 };
+      let dx = (m.x - m.y * D.slant) / D.xScale;
+      if (ROUND_GLYPHS.has(state.glyphId) && D.roundX !== 1) {
+        const b = skeletonBounds(sk);
+        const cx = (b.xMin + b.xMax) / 2;
+        dx = cx + (dx - cx) / D.roundX;
+      }
+      return { x: dx, y: (lo + hi) / 2 };
     };
 
     const hitTest = (x, y, D, mapY) => {
-      for (const [si, stroke] of sk.strokes.entries()) {
+      const shown = structureSkeleton(sk, state.glyphId, editorKind(state.glyphId), D);
+      for (const [si, stroke] of shown.strokes.entries()) {
         for (const [ni, node] of stroke.nodes.entries()) {
           const q = toScreen(...mapNode(node, D, mapY));
           if (Math.hypot(q.x - x, q.y - y) < 10) return { s: si, n: ni };
@@ -373,7 +387,13 @@ export function skeletonView() {
       if (hit) {
         ui.selection = hit;
         if (event?.altKey) { sk.strokes[hit.s].nodes[hit.n].corner = !sk.strokes[hit.s].nodes[hit.n].corner; commit('corner'); }
-        else { dragging = hit; renderPanel(); s.redraw(); }
+        else {
+          // Drags are relative, so nodes the structure moves (aperture) don't jump.
+          const node = sk.strokes[hit.s].nodes[hit.n];
+          dragging = { ...hit, from: { x: node.x, y: node.y }, grab: fromScreen(s.mouseX, s.mouseY, D, mapY) };
+          renderPanel();
+          s.redraw();
+        }
       } else {
         ui.selection = null;
         renderPanel();
@@ -385,7 +405,8 @@ export function skeletonView() {
     s.mouseDragged = () => {
       if (!dragging) return;
       const { D, mapY } = fit();
-      const model = snap(fromScreen(s.mouseX, s.mouseY, D, mapY));
+      const cur = fromScreen(s.mouseX, s.mouseY, D, mapY);
+      const model = snap({ x: dragging.from.x + cur.x - dragging.grab.x, y: dragging.from.y + cur.y - dragging.grab.y });
       const node = sk.strokes[dragging.s].nodes[dragging.n];
       node.x = model.x;
       node.y = model.y;
@@ -430,7 +451,7 @@ export function skeletonView() {
 
   const offGlyph = on('glyph', () => { reload(); updateInfo(); });
   const offProject = on('project', (d) => {
-    if (d.reason === 'params' || d.reason === 'metrics' || d.reason === 'load') { if (d.reason === 'load') reload(); else rebuild(); }
+    if (d.reason === 'params' || d.reason === 'metrics' || d.reason === 'load') { if (d.reason === 'load' || d.key === 'construction') reload(); else rebuild(); }
     updateInfo();
   });
   const offFont = on('font', updateInfo);

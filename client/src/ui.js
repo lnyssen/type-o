@@ -35,7 +35,8 @@ export function toast(message, kind = '') {
 }
 
 // Labelled slider bound to a setter.
-export function slider({ label, hint, min, max, step = 1, value, format = (v) => v, onInput }) {
+export function slider({ label, hint, min, max, step = 1, value, format, onInput }) {
+  format = format || ((v) => v);
   const out = el('span', { class: 'control-value' }, format(value));
   const input = el('input', {
     type: 'range', min, max, step, value,

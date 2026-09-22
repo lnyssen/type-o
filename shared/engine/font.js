@@ -2,7 +2,7 @@
 // glyph outlines. Used by the browser worker (live preview) and by the server
 // (export), so both always agree.
 
-import { BASE, MARKS, COMPOSITES, ALIASES, compositeName } from '../glyphs/latin.js';
+import { BASE, MARKS, COMPOSITES, ALIASES, VARIANTS, compositeName } from '../glyphs/latin.js';
 import { parseSkeleton, rotate180, translateSkeleton, skeletonBounds } from './skeleton.js';
 import { derive } from './params.js';
 import { buildGlyph, contoursBounds, translateContours } from './glyph.js';
@@ -79,10 +79,18 @@ export function editableGlyphs() {
   ];
 }
 
-// The skeleton in effect for an editable id ("A", "mark:acute"...).
-export function skeletonFor(id, overrides = {}) {
+function variantSkeleton(id, construction) {
+  const key = `${id}@${construction}`;
+  if (!defaultCache.has(key)) defaultCache.set(key, parseSkeleton(VARIANTS[id][construction]));
+  return defaultCache.get(key);
+}
+
+// The skeleton in effect for an editable id ("A", "mark:acute"...), taking
+// the construction's alternates into account unless the user drew their own.
+export function skeletonFor(id, overrides = {}, construction = null) {
   if (overrides[id]) return overrides[id];
   if (id.startsWith('mark:')) return markSkeleton(id.slice(5));
+  if (construction && VARIANTS[id]?.[construction]) return variantSkeleton(id, construction);
   return baseSkeleton(id);
 }
 
@@ -178,7 +186,7 @@ export function generateFont(project, opts = {}) {
   const raw = new Map();
   for (const g of GLYPHS) {
     if (g.type === 'composite') continue;
-    raw.set(g.name, buildBase(g.name, skeletonFor(g.name, overrides), g.kind === 'space' ? 'punct' : g.kind, D, quality, gkey));
+    raw.set(g.name, buildBase(g.name, skeletonFor(g.name, overrides, D.construction), g.kind === 'space' ? 'punct' : g.kind, D, quality, gkey));
   }
 
   // Accent outlines, one set sized for lowercase and one for capitals.
@@ -261,7 +269,8 @@ export function generateFont(project, opts = {}) {
       });
       continue;
     }
-    const [mx, my] = placeMark(baseRaw, mk, mode, D, g.mark);
+    const [mx0, my] = placeMark(baseRaw, mk, mode, D, g.mark);
+    const mx = mx0 + my * D.slant; // accents follow the italic angle
     const dx = baseG.dx;
     const markContours = translateContours(mk.contours, mx + dx, my);
     const contours = [...baseG.contours, ...markContours];

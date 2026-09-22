@@ -31,7 +31,7 @@ export function buildExportPayload(project, format) {
   const font = generateFont(project, { quality: 'export' });
   const { D } = font;
   const family = sanitizeFamilyName(project.name);
-  const { styleName, weightClass } = styleFor(project.params);
+  const { styleName, weightClass, italic, italicAngle } = styleFor(project.params);
 
   const glyphs = font.order.map((name) => {
     const g = font.glyphs.get(name);
@@ -79,7 +79,8 @@ export function buildExportPayload(project, format) {
     capHeight: D.m.capHeight,
     overshoot: D.overshoot,
     stem: Math.round(D.stem),
-    italicAngle: 0,
+    italic,
+    italicAngle,
     glyphs,
     kerning: { classes, pairs },
     ligatures,

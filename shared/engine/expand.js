@@ -172,6 +172,17 @@ export function outlineStroke(sampled, ctx) {
           const b = isStart ? R[0] : R[R.length - 1];
           serifs.push(serifContour(Math.min(a.x, b.x), Math.max(a.x, b.x), info.zone.y, info.zone.side === 'bottom' ? 1 : -1, ctx.serif, info.serif === 'head'));
         }
+      } else if (!info.zone && info.free && ctx.terminalCut === 'horizontal' && ctx.terminal !== 'rounded' && Math.abs(dirOut.y) > 0.6) {
+        // Grotesque terminals: curved ends cut level, not square to the
+        // stroke — only where the stroke arrives steeply, so the cut stays short.
+        const outward = dirOut.y > 0 ? 1 : -1;
+        if (isStart) {
+          L = clipToZone(L.slice().reverse(), dirOut, p.y, outward).reverse();
+          R = clipToZone(R.slice().reverse(), dirOut, p.y, outward).reverse();
+        } else {
+          L = clipToZone(L, dirOut, p.y, outward);
+          R = clipToZone(R, dirOut, p.y, outward);
+        }
       } else if (ctx.terminal === 'rounded') {
         const cap = arc(p, width / 2, angleOf(perpLeft(dirOut)), -Math.PI, ctx.arcSteps * 2);
         (isStart ? startCap : endCap).push(...cap);

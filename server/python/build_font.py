@@ -25,7 +25,7 @@ from fontTools.pens.t2CharStringPen import T2CharStringPen
 from fontTools.pens.ttGlyphPen import TTGlyphPen
 from fontTools.ttLib import TTFont
 
-RIBBI = {"Regular", "Bold"}
+RIBBI = {"Regular", "Bold", "Italic", "Bold Italic"}
 
 
 def fail(message, code=1):
@@ -204,7 +204,9 @@ def build(payload):
         names["typographicSubfamily"] = style
     fb.setupNameTable(names)
 
-    fs_selection = (1 << 7) | ((1 << 5) if style == "Bold" else (1 << 6) if style == "Regular" else 0)
+    italic = bool(payload.get("italic"))
+    bold = style in ("Bold", "Bold Italic")
+    fs_selection = (1 << 7) | (1 if italic else 0) | ((1 << 5) if bold else 0) | ((1 << 6) if style == "Regular" else 0)
     fb.setupOS2(
         version=4,
         usWeightClass=int(payload.get("weightClass", 400)),
@@ -223,10 +225,17 @@ def build(payload):
         usBreakChar=32,
         usMaxContext=3,
     )
-    fb.setupPost(underlinePosition=-int(upm * 0.1), underlineThickness=max(20, int(payload.get("stem", 80) * 0.5)))
+    fb.setupPost(
+        underlinePosition=-int(upm * 0.1),
+        underlineThickness=max(20, int(payload.get("stem", 80) * 0.5)),
+        italicAngle=float(payload.get("italicAngle", 0)),
+    )
+    if italic:
+        import math
+        fb.font["hhea"].caretSlopeRise = upm
+        fb.font["hhea"].caretSlopeRun = int(round(upm * math.tan(math.radians(-float(payload.get("italicAngle", 0))))))
     fb.font["head"].fontRevision = float(version)
-    if style == "Bold":
-        fb.font["head"].macStyle = 1
+    fb.font["head"].macStyle = (1 if bold else 0) | (2 if italic else 0)
     fb.font["OS/2"].recalcUnicodeRanges(fb.font)
     fb.font["OS/2"].recalcCodePageRanges(fb.font)
 

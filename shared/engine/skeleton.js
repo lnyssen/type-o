@@ -29,6 +29,7 @@ export function parseSkeleton(src) {
       if (m[1] !== undefined) {
         for (const flag of m[1].split(',').map((s) => s.trim())) {
           if (flag === 'noserif') stroke.noserif = true;
+          else if (flag === 'ap') stroke.ap = true;
           else if (flag === 'attach') stroke.attach = true;
           else if (flag.startsWith('w=')) stroke.w = parseFloat(flag.slice(2));
           else throw new Error(`Unknown stroke flag "${flag}" in "${text}"`);
@@ -71,6 +72,7 @@ export function serializeSkeleton(sk) {
       if (s.w != null && s.w !== 1) flags.push(`w=${s.w}`);
       if (s.noserif) flags.push('noserif');
       if (s.attach) flags.push('attach');
+      if (s.ap) flags.push('ap');
       let out = flags.length ? `[${flags.join(',')}] ` : '';
       s.nodes.forEach((n, i) => {
         if (i > 0) out += s.joins[i - 1] === 'line' ? ' -- ' : ' .. ';

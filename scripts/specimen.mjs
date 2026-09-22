@@ -6,17 +6,16 @@
 
 import { writeFileSync } from 'node:fs';
 import { generateFont, GLYPH_BY_CHAR } from '../shared/engine/font.js';
+import { PRESETS } from '../shared/engine/presets.js';
 
 const out = process.argv[2] || 'specimen.svg';
 const params = JSON.parse(process.argv[3] || '{}');
 
 const ROWS = [
-  { text: 'GenType', size: 150, params: { ...params } },
-  { text: 'Hamburgefonts 0123', size: 74, params: { ...params, weight: 20 } },
-  { text: 'Hamburgefonts 0123', size: 74, params: { ...params, weight: 55, serifMode: true, contrast: 55 } },
-  { text: 'Hamburgefonts 0123', size: 74, params: { ...params, weight: 92, terminals: 'rounded', contrast: 0 } },
-  { text: 'Voix ambiguë d’un cœur qui au zéphyr préfère les jattes de kiwis.', size: 34, params },
-  { text: 'Příliš žluťoučký kůň — ĄĆĘŁŃÓŚŹŻ ąćęłńóśźż — AVATAR Toy office waffle', size: 34, params },
+  { text: 'GenType', size: 120, params: { ...PRESETS.Swiss.params, ...params }, metrics: PRESETS.Swiss.metrics },
+  ...['Geometric', 'Humanist', 'Old style', 'Didone', 'Slab', 'Rounded', 'Italic'].map((name) => ({
+    text: `${name} — Hamburgefonts 0123`, size: 58, params: { ...PRESETS[name].params, ...params }, metrics: PRESETS[name].metrics,
+  })),
 ];
 
 const em = 1000;
@@ -25,7 +24,7 @@ let y = 30;
 let width = 0;
 
 for (const row of ROWS) {
-  const font = generateFont({ params: row.params, metrics: {}, skeletons: {} });
+  const font = generateFont({ params: row.params, metrics: row.metrics || {}, skeletons: {} });
   const scale = row.size / em;
   let x = 0;
   let prev = null;

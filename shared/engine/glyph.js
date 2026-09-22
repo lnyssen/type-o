@@ -5,11 +5,44 @@
 // straddling them, curves overshoot) → Hobby splines → stroke expansion with
 // contrast, terminals and serifs.
 
-import { cloneSkeleton } from './skeleton.js';
+import { cloneSkeleton, skeletonBounds } from './skeleton.js';
+import { ROUND_GLYPHS } from '../glyphs/latin.js';
 import { strokeToCubics, nodeTangents } from './spline.js';
 import { sampleRuns, outlineStroke, dotContour } from './expand.js';
 import { rng, hashString, noise1D } from './random.js';
-import { angleOf, dist } from './geom.js';
+import { angleOf, dist, normAngle } from './geom.js';
+
+// Construction: round letters get their own proportions (circular o for
+// geometric faces, a narrower oval for grotesques and humanists).
+function applyRoundness(sk, name, D) {
+  if (!ROUND_GLYPHS.has(name) || D.roundX === 1) return;
+  const b = skeletonBounds(sk);
+  const cx = (b.xMin + b.xMax) / 2;
+  for (const s of sk.strokes) for (const n of s.nodes) n.x = cx + (n.x - cx) * D.roundX;
+}
+
+// Aperture: free curved terminals of [ap] strokes slide along their arc —
+// towards their neighbour to open the letter, away from it to close it.
+function applyAperture(sk, D) {
+  const t = Math.max(-0.45, Math.min(0.6, D.aperture));
+  if (!t) return;
+  for (const s of sk.strokes) {
+    if (!s.ap || s.closed || s.nodes.length < 3) continue;
+    const cx = s.nodes.reduce((a, n) => a + n.x, 0) / s.nodes.length;
+    const cy = s.nodes.reduce((a, n) => a + n.y, 0) / s.nodes.length;
+    const last = s.nodes.length - 1;
+    for (const [k, nbk, join] of [[0, 1, 0], [last, last - 1, last - 1]]) {
+      const node = s.nodes[k], nb = s.nodes[nbk];
+      if (s.joins[join] !== 'curve' || node.dir != null) continue;
+      const a0 = Math.atan2(node.y - cy, node.x - cx), a1 = Math.atan2(nb.y - cy, nb.x - cx);
+      const r0 = Math.hypot(node.x - cx, node.y - cy), r1 = Math.hypot(nb.x - cx, nb.y - cy);
+      const a = a0 + normAngle(a1 - a0) * t;
+      const r = t > 0 ? r0 + (r1 - r0) * t : r0;
+      node.x = cx + r * Math.cos(a);
+      node.y = cy + r * Math.sin(a);
+    }
+  }
+}
 
 // Design-grid zones per case. `side` tells which way a stroke sitting on the
 // line must be pulled so its edge (not its centerline) lands on the line.
@@ -54,6 +87,17 @@ function quality(q) {
   return q === 'export' ? { step: 4, arcSteps: 8 } : { step: 11, arcSteps: 4 };
 }
 
+// The skeleton after the structural parameters (still in design units).
+// The editor draws its nodes from this so they sit on the outline.
+export function structureSkeleton(skeleton, name, kind, D) {
+  const sk = cloneSkeleton(skeleton);
+  if (!kind.startsWith('mark')) {
+    applyRoundness(sk, name, D);
+    applyAperture(sk, D);
+  }
+  return sk;
+}
+
 // kind: upper | lower | figure | symbol | punct | mark-lower | mark-upper
 export function buildGlyph(name, skeleton, kind, D, opts = {}) {
   const Q = quality(opts.quality);
@@ -65,8 +109,10 @@ export function buildGlyph(name, skeleton, kind, D, opts = {}) {
   const wobble = D.modulation * 16;
   const dotSize = (w) => Math.max(stem * 1.25 * w, stem * 1.05);
 
+  // 0. structure: proportions of rounds, aperture of terminals.
+  const sk = structureSkeleton(skeleton, name, kind, D);
+
   // 1–2. wobble + map to font units, remembering which nodes sit on zones.
-  const sk = cloneSkeleton(skeleton);
   for (const s of sk.strokes) {
     for (const n of s.nodes) {
       const onZone = zones.find(([zy]) => Math.abs(n.y - zy) < 0.5);
@@ -197,16 +243,22 @@ export function buildGlyph(name, skeleton, kind, D, opts = {}) {
 
     // Serif proportions follow the contrast: slab-like (thick, no bracket)
     // when monoline, hairline with a generous bracket when high-contrast.
-    const serifLen = stem * 0.34 + 6;
+    const serifLen = stem * (0.34 + 0.25 * D.thinRatio) + 6; // slabs reach further
     const serifGeom = {
       h: stem * Math.max(0.12, 0.5 * D.thinRatio),
       len: serifLen,
       br: Math.min(serifLen * 0.8, stem * 0.28 * D.contrast),
       arcSteps: Q.arcSteps,
     };
-    const out = outlineStroke(sampled, { widthAt, terminal: D.p.terminals, arcSteps: Q.arcSteps, ends, serif: serifGeom });
+    const out = outlineStroke(sampled, { widthAt, terminal: D.p.terminals, terminalCut: D.terminalCut, arcSteps: Q.arcSteps, ends, serif: serifGeom });
     contours.push(...out.contours);
     serifs.push(...out.serifs);
+  }
+  // 6. slant: a shear around the baseline (italic angle).
+  if (D.slant) {
+    const shear = (list) => list.forEach((c) => c.forEach((p) => { p.x += p.y * D.slant; }));
+    shear(contours);
+    shear(serifs);
   }
   return { name, kind, contours: [...contours, ...serifs], body: contours, serifCount: serifs.length };
 }

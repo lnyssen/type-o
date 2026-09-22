@@ -55,7 +55,7 @@ export function editorKind(id) {
 }
 
 export function currentSkeleton(id = state.glyphId) {
-  return skeletonFor(id, state.project.skeletons);
+  return skeletonFor(id, state.project.skeletons, state.project.params.construction);
 }
 
 export function isEdited(id) {

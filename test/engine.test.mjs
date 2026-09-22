@@ -227,3 +227,53 @@ test('serifs stay proportionate and never fuse with the neighbours', () => {
     for (let i = 1; i < feet.length; i++) assert.ok(feet[i].x0 - feet[i - 1].x1 > 60, 'serifs inside m are fusing');
   }
 });
+
+test('construction swaps the structure, not just the stroke', () => {
+  const geo = generateFont(project({ construction: 'geometric' }));
+  const hum = generateFont(project({ construction: 'humanist' }));
+  const grot = generateFont(project({ construction: 'grotesque' }));
+  // single-storey a: its skeleton is a bowl plus a full-height stem
+  assert.notEqual(serializeSkeleton(skeletonFor('a', {}, 'geometric')), serializeSkeleton(skeletonFor('a', {}, 'grotesque')));
+  const aTopRight = (f) => { const a = f.glyphs.get('a'); return Math.max(...a.contours.flat().filter((p) => p.x > a.bbox.xMax - 20).map((p) => p.y)); };
+  assert.ok(aTopRight(geo) > aTopRight(grot) + 40, 'the single-storey a has a stem reaching the x-height');
+  // binocular g reaches much further left under the baseline than the single-storey one
+  const gHum = hum.glyphs.get('g').bbox, gGrot = grot.glyphs.get('g').bbox;
+  assert.notDeepEqual([Math.round(gHum.yMin), Math.round(gHum.xMax - gHum.xMin)], [Math.round(gGrot.yMin), Math.round(gGrot.xMax - gGrot.xMin)]);
+  // geometric rounds are wider than grotesque ones
+  const w = (f) => f.glyphs.get('o').bbox.xMax - f.glyphs.get('o').bbox.xMin;
+  assert.ok(w(geo) > w(grot) * 1.08, 'geometric o should be rounder');
+});
+
+test('aperture opens and closes terminals', () => {
+  const tip = (font) => { const c = font.glyphs.get('c'); return c.bbox.xMax; };
+  const closed = generateFont(project({ aperture: 0 }));
+  const open = generateFont(project({ aperture: 100 }));
+  const cTop = (font) => {
+    // the height of the upper terminal's lowest point: higher = more open
+    const g = font.glyphs.get('c');
+    const right = g.contours.flat().filter((p) => p.x > g.bbox.xMax - 30);
+    return Math.min(...right.filter((p) => p.y > 250).map((p) => p.y));
+  };
+  assert.ok(cTop(open) > cTop(closed) + 20, 'an open c should end higher up');
+  assert.ok(Number.isFinite(tip(closed)) && Number.isFinite(tip(open)));
+});
+
+test('slant shears outlines and marks the export as italic', () => {
+  const upright = generateFont(project({ slant: 0 }));
+  const italic = generateFont(project({ slant: 12 }));
+  const topX = (font) => { const l = font.glyphs.get('l'); return l.contours.flat().reduce((a, p) => (p.y > a.y ? p : a)).x - l.bbox.xMin; };
+  assert.ok(topX(italic) > topX(upright) + 100, 'the top of l should lean right');
+  const payload = buildExportPayload({ ...project({ slant: 12, weight: 45 }), name: 'Slanted' }, 'ttf');
+  assert.equal(payload.italic, true);
+  assert.equal(payload.styleName, 'Italic');
+  assert.equal(payload.italicAngle, -12);
+});
+
+test('every preset generates a complete font', async () => {
+  const { PRESETS } = await import('../shared/engine/presets.js');
+  for (const [name, preset] of Object.entries(PRESETS)) {
+    const font = generateFont({ params: preset.params, metrics: preset.metrics, skeletons: {} });
+    for (const g of font.glyphs.values())
+      for (const c of g.contours) for (const p of c) assert.ok(Number.isFinite(p.x) && Number.isFinite(p.y), `${name}/${g.name}`);
+  }
+});

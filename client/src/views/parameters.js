@@ -1,19 +1,12 @@
-// Parameters view: the eight dials on the left, the whole character set
+// Parameters view: the dials on the left, the whole character set
 // redrawing live on the right.
 
 import { el, clear, slider, segmented, toggle, numberField } from '../ui.js';
-import { state, setParam, on } from '../state.js';
+import { state, setParam, setMetric, on } from '../state.js';
 import { PARAM_SPEC } from '../../../shared/engine/params.js';
 import { textSvg, glyphGrid } from '../render.js';
+import { PRESETS } from '../../../shared/engine/presets.js';
 
-const PRESETS = {
-  Grotesque: { weight: 45, contrast: 10, terminals: 'sharp', modulation: 0, width: 'normal', tension: 55, serifMode: false },
-  Humanist: { weight: 42, contrast: 45, terminals: 'serif', modulation: 12, width: 'normal', tension: 45, serifMode: false },
-  'Didone-ish': { weight: 55, contrast: 95, terminals: 'sharp', modulation: 0, width: 'condensed', tension: 70, serifMode: true },
-  Rounded: { weight: 62, contrast: 0, terminals: 'rounded', modulation: 0, width: 'normal', tension: 40, serifMode: false },
-  Slab: { weight: 58, contrast: 18, terminals: 'sharp', modulation: 0, width: 'normal', tension: 60, serifMode: true },
-  Hand: { weight: 40, contrast: 55, terminals: 'rounded', modulation: 65, width: 'normal', tension: 35, serifMode: false },
-};
 
 let sampleText = 'Hamburgefonts';
 
@@ -32,6 +25,7 @@ export function parametersView() {
       if (spec.type === 'range') {
         panel.append(slider({
           label: spec.label, hint: spec.hint, min: spec.min, max: spec.max, value: p[key],
+          format: key === 'slant' ? (v) => `${v}°` : undefined,
           onInput: (v) => setParam(key, v),
         }));
       } else if (spec.type === 'enum') {
@@ -66,10 +60,14 @@ export function parametersView() {
           ...Object.entries(PRESETS).map(([name, preset]) =>
             el('button', {
               class: 'btn small ghost',
-              onclick: () => { for (const [k, v] of Object.entries(preset)) setParam(k, v); renderPanel(); },
+              onclick: () => {
+                for (const [k, v] of Object.entries(preset.params)) setParam(k, v);
+                for (const [k, v] of Object.entries(preset.metrics)) setMetric(k, v);
+                renderPanel();
+              },
             }, name)),
         ),
-        el('p', { class: 'hint' }, 'Presets only move the dials — your skeleton edits stay.'),
+        el('p', { class: 'hint' }, 'Presets set structure, proportions and dials — your skeleton edits stay.'),
       ),
     );
   };

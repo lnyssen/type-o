@@ -58,7 +58,7 @@ app.post('/api/generate-glyph', (req, res) => {
       lsb: Math.round(g.lsb),
       bbox: g.bbox,
       path: d,
-      skeleton: serializeSkeleton(skeletonFor(name, project.skeletons)),
+      skeleton: serializeSkeleton(skeletonFor(name, project.skeletons, project.params.construction)),
       svg: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${g.advance} ${m.ascender - m.descender}"><path transform="translate(0 ${m.ascender}) scale(1 -1)" d="${d}"/></svg>`,
     });
   } catch (e) {
