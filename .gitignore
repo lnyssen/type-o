@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 *.log
 tmp/
+
+# Variable masters are downloaded from github.com/google/fonts (OFL); keep only their licenses in git
+server/masters/*/*.ttf
+server/masters/*/*.woff2
