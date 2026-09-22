@@ -232,6 +232,9 @@ export function buildGlyph(name, skeleton, kind, D, opts = {}) {
     const wn = D.modulation ? noise1D(noiseSeed + pr.idx, 140) : null;
     const widthAt = (smp) => {
       let w = stem * wMul * contrastFactor(smp.t, D);
+      // Vertical-stress faces still draw straight up-strokes thin (A, V, M, W…).
+      if (smp.line && D.upstrokeThin && smp.t.x * smp.t.y > 0)
+        w *= 1 - D.upstrokeThin * Math.abs(Math.sin(2 * Math.atan2(smp.t.y, smp.t.x)));
       if (wn) w *= 1 + 0.22 * D.modulation * wn(smp.s);
       if (flare) {
         const ramp = (d) => (d < flareLen ? 1 - d / flareLen : 0);

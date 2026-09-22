@@ -11,8 +11,8 @@ import { previewView } from './views/preview.js';
 import { exportView } from './views/export.js';
 
 const MODES = [
+  ['parameters', 'Design', parametersView],
   ['skeleton', 'Skeleton', skeletonView],
-  ['parameters', 'Parameters', parametersView],
   ['metrics', 'Metrics', metricsView],
   ['preview', 'Preview', previewView],
   ['export', 'Export', exportView],
@@ -28,7 +28,7 @@ let current = null;
 function mount(mode) {
   current?.dispose?.();
   clear(workspace);
-  const def = MODES.find(([id]) => id === mode) || MODES[1];
+  const def = MODES.find(([id]) => id === mode) || MODES[0];
   current = def[2]();
   workspace.append(current.node);
   for (const btn of nav.children) btn.setAttribute('aria-selected', String(btn.dataset.mode === def[0]));
@@ -66,6 +66,7 @@ async function openProject(file) {
 }
 
 document.getElementById('btn-save').addEventListener('click', saveProject);
+document.getElementById('btn-export').addEventListener('click', () => setMode('export'));
 document.getElementById('btn-open').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => { if (fileInput.files[0]) openProject(fileInput.files[0]); fileInput.value = ''; });
 nameInput.addEventListener('input', () => setName(nameInput.value));

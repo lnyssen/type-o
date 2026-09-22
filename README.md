@@ -77,7 +77,7 @@ Vertical metrics (x-height, cap height, ascender, descender) and a global spacin
 ## The interface
 
 - **Skeleton** — p5 canvas editor: drag nodes, insert on a segment, draw new strokes with the pen, toggle straight/curved links, corners and fixed tangents, undo/redo, or edit the skeleton source as text. Only base glyphs and accents are editable; accented glyphs follow their base automatically.
-- **Parameters** — construction, structure and stroke dials, nine starting points, and the whole character set redrawing live.
+- **Design** — numbered sections (01 Style, 02 Structure, 03 Stroke, 04 Details), preset cards drawn in their own typeface, and the font itself as the hero: a fitted headline, alphabet, running text and sizes, or the full grouped glyph set (click a glyph to edit its skeleton).
 - **Metrics** — vertical zones, automatic kerning on/off, and editable tables for every kerning pair and advance width. Overrides are stored in the project; everything else is computed.
 - **Preview** — set your own text at any size, with kerning and ligatures switchable.
 - **Export** — pick a format, download, or load the compiled font into the page to test it for real.

@@ -10,7 +10,7 @@ import { add, sub, mul, dot, cross, perpLeft, angleOf, polyArea, lineIntersect, 
 
 // Returns sampled centerline runs for a stroke already converted to cubics.
 // A sample is { x, y, t: unit tangent, s: arc length from stroke start }.
-export function sampleRuns({ cubics, corners }, closed, step) {
+export function sampleRuns({ cubics, corners, lines = [] }, closed, step) {
   const runs = [];
   let cur = [];
   let s = 0;
@@ -20,7 +20,7 @@ export function sampleRuns({ cubics, corners }, closed, step) {
     for (let i = cur.length ? 1 : 0; i <= n; i++) {
       const t = i / n;
       const p = bezPoint(bz, t);
-      cur.push({ x: p.x, y: p.y, t: bezTangent(bz, t), s: s + L * t });
+      cur.push({ x: p.x, y: p.y, t: bezTangent(bz, t), s: s + L * t, line: lines[k] });
     }
     s += L;
     const isLast = k === cubics.length - 1;

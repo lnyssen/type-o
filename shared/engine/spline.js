@@ -194,5 +194,6 @@ export function strokeToCubics(stroke, tension = 1) {
     const a = tin[idx], b = tout[idx];
     corners.push(!a || !b || dot(a, b) < Math.cos((4 * Math.PI) / 180));
   }
-  return { cubics, corners };
+  const lines = cubics.map((_, i) => joins[i] === 'line');
+  return { cubics, corners, lines };
 }

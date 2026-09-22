@@ -79,3 +79,25 @@ export function glyphGrid(font, { onPick, filter = () => true, cells = null } = 
   }
   return grid;
 }
+
+// A paragraph wrapped to a width in pixels, set at fontSize.
+export function textBlock(font, text, { fontSize = 32, width = 800, lineHeight = 1.3, kerning = true, ligatures = true } = {}) {
+  const maxUnits = (width / fontSize) * 1000;
+  const lines = [];
+  for (const para of text.split('\n')) {
+    let line = '';
+    for (const word of para.split(/\s+/)) {
+      const next = line ? `${line} ${word}` : word;
+      if (line && layout(font, next, { kerning, ligatures }).width > maxUnits) { lines.push(line); line = word; }
+      else line = next;
+    }
+    lines.push(line);
+  }
+  return textSvg(font, lines.join('\n'), { fontSize, kerning, ligatures, lineHeight });
+}
+
+// Font size (px) that makes `text` fill `width` pixels, capped.
+export function fitSize(font, text, width, max = 240, min = 24) {
+  const units = layout(font, text || ' ').width || 1000;
+  return Math.max(min, Math.min(max, (width / units) * 1000));
+}

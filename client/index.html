@@ -19,9 +19,9 @@
       </div>
       <nav class="pills" id="modes" aria-label="Workspace"></nav>
       <div class="topbar-actions">
-        <button class="pill" id="btn-open">Open</button>
-        <button class="pill" id="btn-save">Save</button>
-        <a class="pill pill-accent" id="btn-github" href="https://github.com/" target="_blank" rel="noreferrer noopener">GitHub ↗</a>
+        <button class="pill" id="btn-open" title="Open a .gentype project (⌘O)">Open</button>
+        <button class="pill" id="btn-save" title="Save the project (⌘S)">Save</button>
+        <button class="pill pill-primary" id="btn-export" title="Export the font (⌘E)">Export ↓</button>
       </div>
     </header>
 
@@ -32,7 +32,8 @@
       <span id="status-time"></span>
       <span id="status-python"></span>
       <span class="grow"></span>
-      <span>MIT licensed · fonts you generate are yours</span>
+      <a href="https://github.com/" target="_blank" rel="noreferrer noopener">Open source · MIT</a>
+      <span>Fonts you generate are yours</span>
     </footer>
 
     <div id="toasts" class="toasts" role="status" aria-live="polite"></div>

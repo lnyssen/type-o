@@ -38,14 +38,17 @@ export function toast(message, kind = '') {
 export function slider({ label, hint, min, max, step = 1, value, format, onInput }) {
   format = format || ((v) => v);
   const out = el('span', { class: 'control-value' }, format(value));
+  const fill = (v) => input.style.setProperty('--p', `${((v - min) / (max - min)) * 100}%`);
   const input = el('input', {
-    type: 'range', min, max, step, value,
+    type: 'range', min, max, step, value, 'aria-label': label,
     oninput: (e) => {
       const v = Number(e.target.value);
       out.textContent = format(v);
+      fill(v);
       onInput(v);
     },
   });
+  fill(value);
   return el('div', { class: 'control', title: hint || '' },
     el('div', { class: 'control-head' }, el('label', {}, label), out),
     input,

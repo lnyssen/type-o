@@ -99,6 +99,8 @@ export function derive(params, metrics) {
     thinRatio: 1 - 0.85 * contrast,
     contrast,
     penAngle: (C.penAngle * Math.PI) / 180,
+    // how much thinner straight up-strokes get when the stress is vertical
+    upstrokeThin: 0.62 * contrast * Math.max(0, 1 - C.penAngle / 25),
     tension: 1.12 - p.tension * 0.003, // Hobby tension: 1.12 (soft) → 0.82 (squarish)
     modulation: p.modulation / 100,
     widthFactor: WIDTH_FACTOR[p.width],
