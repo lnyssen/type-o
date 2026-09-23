@@ -31,6 +31,14 @@ function filesOf(id) {
   return [['roman', roman], ['italic', italic]].filter(([, n]) => n);
 }
 
+const CHARSET = 'import sys,json\nfrom fontTools.ttLib import TTFont\nf=TTFont(sys.argv[1],lazy=True)\nprint(json.dumps({"codepoints":sorted(f.getBestCmap())}))';
+
+function run(args) {
+  const r = spawnSync(python, args, { encoding: 'utf8', maxBuffer: 32 * 1024 * 1024 });
+  if (r.status !== 0) throw new Error(r.stderr?.trim() || 'Python failed — run npm run setup:python first');
+  return r.stdout;
+}
+
 async function download(url, dest) {
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status} for ${url}`);
@@ -43,10 +51,13 @@ for (const id of ids) {
     const ttf = path.join(MASTERS, id, `${role}.ttf`);
     const woff2 = path.join(MASTERS, id, `preview-${role}.woff2`);
     try {
-      if (existsSync(ttf) && existsSync(woff2)) { console.log(`· ${id}/${role} — already there`); continue; }
+      const charset = path.join(MASTERS, id, 'charset.json');
+      const done = existsSync(ttf) && existsSync(woff2) && (role === 'italic' || existsSync(charset));
+      if (done) { console.log(`· ${id}/${role} — already there`); continue; }
       if (!existsSync(ttf)) await download(`${BASE}/${id}/${encodeURIComponent(file)}`, ttf);
-      const sub = spawnSync(python, [path.join(root, 'server/python/preview_font.py'), ttf, woff2], { encoding: 'utf8' });
-      if (sub.status !== 0) throw new Error(sub.stderr?.trim() || 'preview_font.py failed — run npm run setup:python first');
+      if (!existsSync(woff2)) run([path.join(root, 'server/python/preview_font.py'), ttf, woff2]);
+      // The covered codepoints, so the glyph overview needs no server call.
+      if (role === 'roman') writeFileSync(charset, run(['-c', CHARSET, ttf]).trim());
       console.log(`✓ ${id}/${role}`);
     } catch (e) {
       failed++;

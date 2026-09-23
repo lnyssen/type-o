@@ -11,7 +11,9 @@
     "setup": "npm run setup:python && npm run setup:masters",
     "setup:python": "python3 -m venv server/.venv && server/.venv/bin/pip install -r server/python/requirements.txt",
     "setup:masters": "node scripts/setup-masters.mjs",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "build:vercel": "node scripts/build-vercel.mjs",
+    "build:catalog": "node scripts/build-catalog-json.mjs"
   },
   "engines": {
     "node": ">=20"

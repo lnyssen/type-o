@@ -19,7 +19,7 @@ app.use(express.json({ limit: '1mb' }));
 app.disable('x-powered-by');
 
 const masterFile = (id, file) => {
-  if (!FAMILY_BY_ID.has(id) || !/^(roman|italic|preview-roman|preview-italic)\.(ttf|woff2)$|^OFL\.txt$/.test(file)) return null;
+  if (!FAMILY_BY_ID.has(id) || !/^(roman|italic|preview-roman|preview-italic)\.(ttf|woff2)$|^(OFL\.txt|charset\.json)$/.test(file)) return null;
   const p = path.join(MASTERS, id, file);
   return fs.existsSync(p) ? p : null;
 };
@@ -33,31 +33,13 @@ app.get('/api/families', (_req, res) => {
   res.json({ genres: GENRES, families: FAMILIES, looks: LOOKS });
 });
 
-// Characters a master actually covers (for the glyph overview).
-const charsetCache = new Map();
-app.get('/api/families/:id/charset', async (req, res) => {
-  const file = masterFile(req.params.id, 'roman.ttf');
-  if (!file) return res.status(404).json({ error: 'Unknown family' });
-  try {
-    if (!charsetCache.has(file)) {
-      const { data } = await runPython('-c', [
-        'import sys,json\nfrom fontTools.ttLib import TTFont\nf=TTFont(sys.argv[1],lazy=True)\nprint(json.dumps(sorted(f.getBestCmap().keys())))',
-        file,
-      ]);
-      charsetCache.set(file, JSON.parse(data.toString('utf8')));
-    }
-    res.json({ codepoints: charsetCache.get(file) });
-  } catch (e) {
-    res.status(500).json({ error: String(e.message || e) });
-  }
-});
-
 app.get('/masters/:id/:file', (req, res) => {
   const file = masterFile(req.params.id, req.params.file);
   if (!file) return res.status(404).end();
   res.setHeader('Cache-Control', 'public, max-age=86400');
   if (file.endsWith('.woff2')) res.type('font/woff2');
   else if (file.endsWith('.ttf')) res.type('font/ttf');
+  else if (file.endsWith('.json')) res.type('application/json');
   else res.type('text/plain; charset=utf-8');
   res.sendFile(file);
 });

@@ -1,0 +1,11 @@
+# Vercel replaces .gitignore with this file, which is how the variable masters
+# (gitignored, 18 MB) reach the deployment. Keep them listed nowhere here.
+.git
+node_modules
+dist
+server/.venv
+__pycache__
+docs
+test
+*.log
+.DS_Store

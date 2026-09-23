@@ -1,0 +1,341 @@
+{
+  "robotoflex": {
+    "name": "Roboto Flex",
+    "credit": "Roboto Flex Project Authors (Font Bureau, Google)",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        1000
+      ],
+      "wdth": [
+        25,
+        100,
+        151
+      ],
+      "opsz": [
+        8,
+        14,
+        144
+      ],
+      "YTLC": [
+        416,
+        514,
+        570
+      ],
+      "YTUC": [
+        528,
+        712,
+        760
+      ],
+      "YTAS": [
+        649,
+        750,
+        854
+      ],
+      "YTDE": [
+        -305,
+        -203,
+        -98
+      ],
+      "XOPQ": [
+        27,
+        96,
+        175
+      ],
+      "YOPQ": [
+        25,
+        79,
+        135
+      ],
+      "XTRA": [
+        323,
+        468,
+        603
+      ],
+      "GRAD": [
+        -200,
+        0,
+        150
+      ],
+      "slnt": [
+        -10,
+        0,
+        0
+      ]
+    }
+  },
+  "inter": {
+    "name": "Inter",
+    "credit": "Inter Project Authors (Rasmus Andersson)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ],
+      "opsz": [
+        14,
+        14,
+        32
+      ]
+    }
+  },
+  "archivo": {
+    "name": "Archivo",
+    "credit": "Archivo Project Authors (Omnibus-Type)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ],
+      "wdth": [
+        62,
+        100,
+        125
+      ]
+    }
+  },
+  "spacegrotesk": {
+    "name": "Space Grotesk",
+    "credit": "Space Grotesk Project Authors (Florian Karsten)",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        300,
+        400,
+        700
+      ]
+    }
+  },
+  "jost": {
+    "name": "Jost",
+    "credit": "Jost Project Authors (indestructible type*)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ]
+    }
+  },
+  "sourcesans3": {
+    "name": "Source Sans 3",
+    "credit": "Adobe (Paul D. Hunt)",
+    "italic": true,
+    "rfn": [
+      "Source"
+    ],
+    "axes": {
+      "wght": [
+        200,
+        400,
+        900
+      ]
+    }
+  },
+  "ebgaramond": {
+    "name": "EB Garamond",
+    "credit": "EB Garamond Project Authors (Georg Duffner, Octavio Pardo)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        800
+      ]
+    }
+  },
+  "fraunces": {
+    "name": "Fraunces",
+    "credit": "Fraunces Project Authors (Undercase Type)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ],
+      "opsz": [
+        9,
+        144,
+        144
+      ],
+      "SOFT": [
+        0,
+        0,
+        100
+      ],
+      "WONK": [
+        0,
+        0,
+        1
+      ]
+    }
+  },
+  "sourceserif4": {
+    "name": "Source Serif 4",
+    "credit": "Adobe (Frank Grießhammer)",
+    "italic": true,
+    "rfn": [
+      "Source"
+    ],
+    "axes": {
+      "wght": [
+        200,
+        400,
+        900
+      ],
+      "opsz": [
+        8,
+        20,
+        60
+      ]
+    }
+  },
+  "bodonimoda": {
+    "name": "Bodoni Moda",
+    "credit": "Bodoni Moda Project Authors (indestructible type*)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        900
+      ],
+      "opsz": [
+        6,
+        11,
+        96
+      ]
+    }
+  },
+  "playfair": {
+    "name": "Playfair",
+    "credit": "Playfair Project Authors (Claus Eggers Sørensen)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        300,
+        400,
+        900
+      ],
+      "wdth": [
+        87.5,
+        100,
+        112.5
+      ],
+      "opsz": [
+        5,
+        14,
+        1200
+      ]
+    }
+  },
+  "bitter": {
+    "name": "Bitter",
+    "credit": "Bitter Project Authors (Huerta Tipográfica)",
+    "italic": true,
+    "rfn": [
+      "Bitter Pro"
+    ],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ]
+    }
+  },
+  "nunito": {
+    "name": "Nunito",
+    "credit": "Nunito Project Authors (Vernon Adams, Cyreal)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        200,
+        400,
+        1000
+      ]
+    }
+  },
+  "anybody": {
+    "name": "Anybody",
+    "credit": "Anybody Project Authors (Etcetera Type Co)",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ],
+      "wdth": [
+        50,
+        100,
+        150
+      ]
+    }
+  },
+  "recursive": {
+    "name": "Recursive",
+    "credit": "Recursive Project Authors (Arrow Type)",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        300,
+        400,
+        1000
+      ],
+      "CASL": [
+        0,
+        0,
+        1
+      ],
+      "MONO": [
+        0,
+        0,
+        1
+      ],
+      "CRSV": [
+        0,
+        0.5,
+        1
+      ],
+      "slnt": [
+        -15,
+        0,
+        0
+      ]
+    }
+  },
+  "caveat": {
+    "name": "Caveat",
+    "credit": "Caveat Project Authors (Impallari Type)",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        700
+      ]
+    }
+  }
+}

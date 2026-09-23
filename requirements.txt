@@ -1,0 +1,3 @@
+# Dependencies of the Vercel Python function (api/export-font.py).
+# Local development uses server/python/requirements.txt in server/.venv.
+fonttools[woff]>=4.50

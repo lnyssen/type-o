@@ -24,9 +24,14 @@ RIBBI = {"Regular", "Italic", "Bold", "Bold Italic"}
 NAME_IDS_TO_REPLACE = {1, 2, 3, 4, 6, 16, 17, 18, 21, 22, 25}
 
 
+class Unbuildable(Exception):
+    """Something in the payload makes this font impossible to build."""
+
+
 def fail(message):
-    sys.stderr.write(json.dumps({"error": message}) + "\n")
-    sys.exit(1)
+    # Raised so the module can be used as a library; main() turns it into the
+    # stderr status line and the exit code the Node server expects.
+    raise Unbuildable(message)
 
 
 def ps_name(family, style):
@@ -204,19 +209,24 @@ def build(p):
     return data
 
 
+def die(message):
+    sys.stderr.write(json.dumps({"error": message}) + "\n")
+    sys.exit(1)
+
+
 def main():
     try:
         payload = json.load(sys.stdin)
     except Exception as e:  # noqa: BLE001
-        fail(f"Invalid JSON payload: {e}")
+        die(f"Invalid JSON payload: {e}")
     if payload.get("format") not in ("ttf", "otf", "woff", "woff2"):
-        fail("Unsupported format")
+        die("Unsupported format")
     try:
         data = build(payload)
-    except SystemExit:
-        raise
+    except Unbuildable as e:
+        die(str(e))
     except Exception as e:  # noqa: BLE001
-        fail(f"{type(e).__name__}: {e}")
+        die(f"{type(e).__name__}: {e}")
     sys.stdout.buffer.write(data)
 
 

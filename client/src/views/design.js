@@ -170,7 +170,7 @@ export function designView() {
       if (charsets.has(p.family)) fill(charsets.get(p.family));
       else {
         grid.append(el('p', { class: 'hint' }, 'Loading…'));
-        fetch(`/api/families/${p.family}/charset`).then((r) => r.json()).then((d) => {
+        fetch(`/masters/${p.family}/charset.json`).then((r) => r.json()).then((d) => {
           // the browser previews a Latin subset: show what it can draw
           const shown = d.codepoints.filter((cp) => cp < 0x180 || (cp >= 0x2010 && cp <= 0x2122) || cp === 0xfb01 || cp === 0xfb02);
           charsets.set(p.family, shown);

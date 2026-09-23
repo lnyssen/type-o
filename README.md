@@ -79,14 +79,36 @@ Everything GenType exports is a **Modified Version** of an OFL font, so your exp
 
 The GenType **code** is MIT.
 
+## Deploying
+
+The live build runs on Vercel: the interface, the preview fonts, the licences
+and the character sets are static; `/api/export-font` is a Python function that
+instantiates the masters on demand (about 3–4 s per export, cold or warm).
+
+```bash
+npm run setup:masters   # the deployment carries the masters; it will not build without them
+vercel deploy --prod
+```
+
+`.vercelignore` replaces `.gitignore` for the upload, which is how the 18 MB of
+variable masters reach the function — they are not in git. If you deploy from a
+Git integration instead of the CLI, commit them first (`git add -f
+server/masters`), otherwise the build stops with a list of what is missing.
+
+`api/export-font.py` is the serverless twin of `server/index.js`: it validates
+the project, picks the master and calls the same `instance_font.py`. It cannot
+import `shared/catalog.js`, so `node scripts/build-catalog-json.mjs` writes the
+fields it needs into the committed `api/_catalog.json` — and `npm test` fails if
+that file drifts, or if the two implementations stop naming and refusing
+projects identically.
+
 ## API
 
 | Endpoint | Purpose |
 |---|---|
 | `GET /api/health` | Python toolchain status, formats, missing masters. |
-| `GET /api/families` | Genres, families with their axes, and the look presets. |
-| `GET /api/families/:id/charset` | The codepoints that family covers. |
-| `GET /masters/:id/:file` | Preview WOFF2 and `OFL.txt` for a family. |
+| `GET /api/families` | Genres, families with their axes, and the look presets (local only). |
+| `GET /masters/:id/:file` | Preview WOFF2, `charset.json` and `OFL.txt` for a family. |
 | `POST /api/export-font` | `{ project, format }` → the font binary as a download. |
 
 `project` is the contents of a `.gentype` file; it is validated and clamped on the way in.
@@ -108,9 +130,12 @@ server/index.js        Express API
 server/compile.js      runs the Python helpers
 server/python/         instance_font.py (instancing, oblique, tracking, renaming)
                        preview_font.py  (light Latin WOFF2 previews)
-server/masters/<id>/   roman.ttf, italic.ttf, previews (downloaded), OFL.txt, METADATA.pb
-scripts/               setup-masters.mjs
-test/                  catalogue & project rules, end-to-end instancing
+server/masters/<id>/   roman.ttf, italic.ttf, previews, charset.json (downloaded),
+                       OFL.txt, METADATA.pb (in git)
+api/export-font.py     the same API as one Vercel Python function
+api/_catalog.json      generated from shared/catalog.js for that function
+scripts/               setup-masters.mjs, build-catalog-json.mjs, build-vercel.mjs
+test/                  catalogue & project rules, instancing, Node↔Python parity
 ```
 
 ## Adding a family
@@ -127,7 +152,8 @@ test/                  catalogue & project rules, end-to-end instancing
 npm test
 ```
 
-Look presets stay inside their axis ranges, `.gentype` files round-trip, malformed projects are coerced rather than crashing, style names follow weight and width, forbidden names are refused — and, when Python and the masters are installed, all four formats compile into loadable fonts with no `fvar` left, the right names and a real italic angle.
+`api/_catalog.json` is current, the Node and Python export paths build the same
+payload and refuse the same names, look presets stay inside their axis ranges, `.gentype` files round-trip, malformed projects are coerced rather than crashing, style names follow weight and width, forbidden names are refused — and, when Python and the masters are installed, all four formats compile into loadable fonts with no `fvar` left, the right names and a real italic angle.
 
 ## Known limits
 
@@ -135,7 +161,8 @@ Look presets stay inside their axis ranges, `.gentype` files round-trip, malform
 - Latin only — the catalogue's masters cover Latin (many include Greek and Cyrillic, which are kept but not previewed).
 - The oblique is a shear, not a redrawn cursive; use a family's true italic when it has one.
 - No hinting is generated.
-- Deployment needs a Node host that can run Python — a container or a VPS, not a pure serverless edge function.
+- Exporting needs Python: any Node host that can run it, or Vercel's Python runtime (see **Deploying**). A pure edge runtime will not do.
+- An export takes 3–4 s server-side, so the function is configured with a 60 s limit rather than the 10 s default.
 
 ## The skeleton engine
 
