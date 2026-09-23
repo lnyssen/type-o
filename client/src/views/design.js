@@ -110,9 +110,11 @@ export function designView() {
   // Scale a one-line element so it fills the available width.
   function fit(node, max = 300, min = 24) {
     const run = () => {
+      // Measure at a known size with the box hugging the text, then scale.
       node.style.fontSize = '100px';
-      const w = node.scrollWidth || 1;
-      const avail = pad.clientWidth - 8;
+      const w = node.getBoundingClientRect().width || 1;
+      const cs = getComputedStyle(pad);
+      const avail = pad.clientWidth - parseFloat(cs.paddingLeft) - parseFloat(cs.paddingRight) - 2;
       node.style.fontSize = `${Math.max(min, Math.min(max, (100 * avail) / w))}px`;
     };
     fits.push(run);
@@ -218,7 +220,7 @@ export function designView() {
         ))),
       ) : null,
     );
-    ensureFont(p.family, p.italic).then(() => fits.forEach((fn) => fn()));
+    ensureFont(p.family, p.italic).then(() => document.fonts.ready).then(() => fits.forEach((fn) => fn()));
   }
 
   // Axis moves only restyle what is on screen (no rebuild): instant.

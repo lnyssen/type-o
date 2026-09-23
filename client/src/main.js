@@ -1,20 +1,13 @@
 // App shell: mode switching, project save/load, shortcuts, status bar.
 
 import { el, clear, toast } from './ui.js';
-import { state, on, emit, setMode, setName, restore, loadProject, undo, redo } from './state.js';
-import { regenerate } from './engine.js';
-import { serializeProject, parseProject, FILE_EXTENSION } from '../../shared/engine/project.js';
-import { parametersView } from './views/parameters.js';
-import { skeletonView } from './views/skeleton.js';
-import { metricsView } from './views/metrics.js';
-import { previewView } from './views/preview.js';
+import { state, on, setMode, setName, restore, loadProject, family } from './state.js';
+import { serializeProject, parseProject, FILE_EXTENSION } from '../../shared/project.js';
+import { designView } from './views/design.js';
 import { exportView } from './views/export.js';
 
 const MODES = [
-  ['parameters', 'Design', parametersView],
-  ['skeleton', 'Skeleton', skeletonView],
-  ['metrics', 'Metrics', metricsView],
-  ['preview', 'Preview', previewView],
+  ['design', 'Design', designView],
   ['export', 'Export', exportView],
 ];
 
@@ -57,7 +50,6 @@ async function openProject(file) {
     const { project, warnings } = parseProject(await file.text());
     loadProject(project);
     nameInput.value = project.name;
-    regenerate();
     toast(`Opened “${project.name}”`, 'ok');
     for (const w of warnings.slice(0, 3)) toast(w, 'error');
   } catch (e) {
@@ -80,12 +72,11 @@ window.addEventListener('drop', (e) => {
 
 window.addEventListener('keydown', (e) => {
   const mod = e.metaKey || e.ctrlKey;
-  const typing = /^(INPUT|TEXTAREA)$/.test(document.activeElement?.tagName || '');
-  if (mod && e.key.toLowerCase() === 's') { e.preventDefault(); saveProject(); }
-  else if (mod && e.key.toLowerCase() === 'o') { e.preventDefault(); fileInput.click(); }
-  else if (mod && e.key.toLowerCase() === 'e') { e.preventDefault(); setMode('export'); }
-  else if (mod && e.key.toLowerCase() === 'z' && !e.shiftKey) { if (typing) return; e.preventDefault(); if (undo()) emit('project', { reason: 'skeleton', label: 'undo' }); }
-  else if (mod && (e.key.toLowerCase() === 'y' || (e.key.toLowerCase() === 'z' && e.shiftKey))) { if (typing) return; e.preventDefault(); redo(); }
+  if (!mod) return;
+  const key = e.key.toLowerCase();
+  if (key === 's') { e.preventDefault(); saveProject(); }
+  else if (key === 'o') { e.preventDefault(); fileInput.click(); }
+  else if (key === 'e') { e.preventDefault(); setMode('export'); }
 });
 
 // ---- status bar ----
@@ -94,27 +85,30 @@ const statusGlyphs = document.getElementById('status-glyphs');
 const statusTime = document.getElementById('status-time');
 const statusPython = document.getElementById('status-python');
 
-on('font', (font) => {
-  statusGlyphs.textContent = `${font.glyphs.length} glyphs`;
-  statusTime.textContent = `preview rebuilt in ${font.ms} ms`;
-});
-on('generating', () => { statusTime.textContent = 'generating…'; });
-on('font-error', (message) => toast(`Generation failed: ${message}`, 'error'));
-on('mode', mount);
+function showProject() {
+  const fam = family();
+  statusGlyphs.textContent = `${fam.name} · ${fam.genre}`;
+  statusTime.textContent = state.project.look ? `look: ${state.project.look}` : 'custom';
+  if (nameInput.value !== state.project.name) nameInput.value = state.project.name;
+}
 
-// Regenerate whenever anything that changes outlines changes.
-let pending = null;
-on('project', (detail) => {
-  if (detail.reason === 'name') return;
-  clearTimeout(pending);
-  pending = setTimeout(regenerate, 40);
-});
+on('project', showProject);
+on('mode', mount);
 
 fetch('/api/health')
   .then((r) => r.json())
   .then((h) => {
-    statusPython.textContent = h.python?.ok ? `compiler ready · fontTools ${h.python.fontTools}` : 'compiler unavailable — run npm run setup:python';
-    statusPython.style.color = h.python?.ok ? '' : 'var(--danger)';
+    const missing = h.missingMasters?.length;
+    if (missing) {
+      statusPython.textContent = `${missing} master${missing > 1 ? 's' : ''} missing — run npm run setup:masters`;
+      statusPython.style.color = 'var(--danger)';
+    } else if (h.python?.ok) {
+      statusPython.textContent = `compiler ready · fontTools ${h.python.fontTools}`;
+      statusPython.style.color = '';
+    } else {
+      statusPython.textContent = 'compiler unavailable — run npm run setup:python';
+      statusPython.style.color = 'var(--danger)';
+    }
   })
   .catch(() => { statusPython.textContent = 'API offline — export disabled'; statusPython.style.color = 'var(--danger)'; });
 
@@ -122,5 +116,5 @@ fetch('/api/health')
 
 restore();
 nameInput.value = state.project.name;
+showProject();
 mount(state.mode);
-regenerate();

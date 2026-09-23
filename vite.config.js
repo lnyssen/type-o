@@ -10,7 +10,7 @@ export default defineConfig({
     port: 3000,
     open: false,
     fs: { allow: ['..'] },
-    proxy: { '/api': 'http://localhost:5188' },
+    proxy: { '/api': 'http://localhost:5188', '/masters': 'http://localhost:5188' },
   },
   preview: { port: 3000 },
 });

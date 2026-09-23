@@ -191,7 +191,16 @@ def build(p):
     check = TTFont(io.BytesIO(data))
     if check.getGlyphSet() is None or check["maxp"].numGlyphs < 2:
         fail("The compiled font is empty")
-    sys.stderr.write(json.dumps({"ok": True, "bytes": len(data), "seconds": round(time.time() - started, 2)}) + "\n")
+    sys.stderr.write(json.dumps({
+        "ok": True,
+        "bytes": len(data),
+        "seconds": round(time.time() - started, 2),
+        "variable": "fvar" in check,
+        "glyphs": check["maxp"].numGlyphs,
+        "familyName": family,
+        "styleName": style,
+        "italicAngle": check["post"].italicAngle,
+    }) + "\n")
     return data
 
 
