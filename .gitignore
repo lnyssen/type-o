@@ -14,3 +14,8 @@ server/masters/*/*.woff2
 server/masters/*/charset.json
 .vercel
 .env*
+
+# Scratch output from scripts/lab-specimen.mjs and friends: served by the dev
+# server so it can be looked at, never part of a build.
+client/public/*
+!client/public/.gitkeep

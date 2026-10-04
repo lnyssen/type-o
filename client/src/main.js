@@ -3,11 +3,11 @@
 import { el, clear, toast } from './ui.js';
 import { state, on, setMode, setName, restore, loadProject, family } from './state.js';
 import { serializeProject, parseProject, FILE_EXTENSION } from '../../shared/project.js';
-import { designView } from './views/design.js';
+import { labView } from './views/lab.js';
 import { exportView } from './views/export.js';
 
 const MODES = [
-  ['design', 'Design', designView],
+  ['lab', 'Lab', labView],
   ['export', 'Export', exportView],
 ];
 

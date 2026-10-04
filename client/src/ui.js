@@ -19,6 +19,17 @@ export function el(tag, props = {}, ...children) {
   return node;
 }
 
+// SVG needs its own namespace; createElement would hand back an unknown tag.
+export function svg(props = {}, markup = '') {
+  const node = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  for (const [k, v] of Object.entries(props)) {
+    if (v === null || v === undefined || v === false) continue;
+    node.setAttribute(k, v === true ? '' : v);
+  }
+  if (markup) node.innerHTML = markup;
+  return node;
+}
+
 export const clear = (node) => { while (node.firstChild) node.removeChild(node.firstChild); return node; };
 
 export function toast(message, kind = '') {

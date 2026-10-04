@@ -1,9 +1,11 @@
-// .gentype projects (v2): a master family, its axis values and a few
-// transforms. Everything needed to reproduce the exact same font.
+// .gentype projects (v3): a master family, its axis values, a few transforms
+// and the operator chain applied to its outlines. Everything needed to
+// reproduce the exact same font, down to the last accident.
 
 import { FAMILY_BY_ID, FAMILIES, LOOKS, defaultAxes, normalizeAxes, nameProblem } from './catalog.js';
+import { parseChain } from './ops/chain.js';
 
-export const FILE_VERSION = 2;
+export const FILE_VERSION = 3;
 export const FILE_EXTENSION = '.gentype';
 export const FORMATS = ['ttf', 'otf', 'woff', 'woff2'];
 export const CONTENT_TYPES = { ttf: 'font/ttf', otf: 'font/otf', woff: 'font/woff', woff2: 'font/woff2' };
@@ -28,6 +30,9 @@ export function projectFromLook(look, name = 'Untitled') {
     italic: false,
     oblique: 0,
     tracking: look.tracking ?? 0,
+    chain: [],
+    seed: 1,
+    text: 'Rafale',
   };
 }
 
@@ -60,6 +65,9 @@ export function parseProject(input) {
     italic: Boolean(data.italic) && family.italic,
     oblique: clamp(data.oblique, TRANSFORMS.oblique.min, TRANSFORMS.oblique.max, 0),
     tracking: Math.round(clamp(data.tracking, TRANSFORMS.tracking.min, TRANSFORMS.tracking.max, 0)),
+    chain: parseChain(data.chain),
+    seed: Math.max(0, Math.round(clamp(data.seed, 0, 1e9, 1))),
+    text: typeof data.text === 'string' && data.text.trim() ? data.text.slice(0, 60) : 'Rafale',
   };
   if (project.italic) project.oblique = 0;
   return { project, warnings };

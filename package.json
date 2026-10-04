@@ -19,6 +19,7 @@
     "node": ">=20"
   },
   "dependencies": {
+    "clipper-lib": "^6.4.2",
     "express": "^5.2.1"
   },
   "devDependencies": {

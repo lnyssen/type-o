@@ -469,3 +469,45 @@ textarea { resize: vertical; min-height: 68px; }
   .stage-pad { padding: 20px 16px 48px; }
   .statusbar { flex-wrap: wrap; height: auto; padding: 8px 16px; }
 }
+
+/* ---------- lab: the operator chain ---------- */
+
+.family-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip.wide { padding: 5px 12px; font-size: 12px; }
+
+.steps { display: flex; flex-direction: column; gap: 6px; }
+.step { border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); overflow: hidden; }
+.step.open { border-color: var(--line-strong); }
+.step.muted { opacity: 0.45; }
+.step-head { display: flex; align-items: stretch; gap: 0; }
+.step-name {
+  flex: 1; display: flex; align-items: center; gap: 9px;
+  background: none; border: none; cursor: pointer; text-align: left;
+  padding: 9px 10px; color: var(--text);
+  font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;
+}
+.step-index { font-family: var(--mono); font-size: 10px; color: var(--accent-text); }
+.step-btn {
+  background: none; border: none; cursor: pointer;
+  width: 28px; color: var(--text-faint); font-size: 12px;
+  transition: color 0.15s var(--ease), background 0.15s var(--ease);
+}
+.step-btn:hover:not(:disabled) { color: var(--text); background: var(--surface-2); }
+.step-btn.danger:hover { color: var(--danger); }
+.step-btn:disabled { opacity: 0.25; cursor: not-allowed; }
+.step-body { display: flex; flex-direction: column; gap: 14px; padding: 4px 12px 14px; border-top: 1px solid var(--line); }
+.add-menu { display: flex; flex-wrap: wrap; gap: 4px; }
+
+.meter { display: flex; align-items: center; gap: 10px; }
+.meter-bar { flex: 1; height: 3px; border-radius: 3px; background: var(--surface-3); overflow: hidden; }
+.meter-bar i { display: block; height: 100%; background: var(--accent); }
+
+/* ---------- lab: the ink ---------- */
+
+.ink { display: block; width: 100%; fill: var(--text); }
+.ink-stage { padding: 18px 0 40px; }
+.ink-stage .ink { max-height: 56vh; }
+.ink-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); margin-top: 22px; }
+.ink-cell { background: var(--bg); aspect-ratio: 1; display: grid; place-items: center; padding: 12px; }
+.ink-cell .ink { max-height: 100%; }
+.loading { display: flex; align-items: center; gap: 10px; color: var(--text-faint); padding: 60px 0; }

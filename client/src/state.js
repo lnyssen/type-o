@@ -9,7 +9,7 @@ const listeners = new Map();
 
 export const state = {
   project: newProject(),
-  mode: 'design',
+  mode: 'lab',
 };
 
 export function on(topic, fn) {
@@ -63,9 +63,24 @@ export function setTransform(key, value) {
 }
 
 export function applyLook(look) {
-  const { name, version } = state.project;
-  state.project = { ...projectFromLook(look, name), version };
+  const { name, version, chain, seed, text } = state.project;
+  state.project = { ...projectFromLook(look, name), version, chain, seed, text };
   changed('look');
+}
+
+export function setChain(chain) {
+  state.project.chain = chain;
+  changed('chain');
+}
+
+export function setSeed(seed) {
+  state.project.seed = Math.max(0, Math.round(seed));
+  changed('seed');
+}
+
+export function setText(text) {
+  state.project.text = text;
+  changed('text');
 }
 
 export function setName(name) {
