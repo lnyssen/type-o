@@ -4,8 +4,9 @@
   "outputDirectory": "dist",
   "framework": null,
   "functions": {
-    "api/export-font.py": {
+    "api/*.py": {
       "maxDuration": 60,
+      "memory": 2048,
       "includeFiles": "server/{masters/*/*.ttf,python/*.py}"
     }
   },

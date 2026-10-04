@@ -1,4 +1,11 @@
 """POST /api/build-font — pack the polygons the browser produced into a font."""
+import os
+import sys
+
+# Vercel imports this file to find `handler`, with only the project root on
+# sys.path — so the sibling module has to be made importable first.
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 from _shared import CATALOG, Refused, json_handler, licence_of  # noqa: F401
 
 import build_font
