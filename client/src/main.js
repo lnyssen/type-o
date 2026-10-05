@@ -79,6 +79,28 @@ window.addEventListener('keydown', (e) => {
   else if (key === 'e') { e.preventDefault(); setMode('export'); }
 });
 
+// ---- theme ----
+
+const themeBtn = document.getElementById('btn-theme');
+const THEME_KEY = 'typeo.theme';
+
+function setTheme(theme, remember = true) {
+  document.documentElement.dataset.theme = theme;
+  themeBtn.textContent = theme === 'dark' ? 'Light' : 'Dark';
+  themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light' : 'Switch to dark');
+  if (remember) { try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode */ } }
+}
+
+setTheme(document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light', false);
+themeBtn.addEventListener('click', () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'));
+
+// Follow the system until the choice is made explicitly.
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+  let stored = null;
+  try { stored = localStorage.getItem(THEME_KEY); } catch { /* private mode */ }
+  if (!stored) setTheme(e.matches ? 'dark' : 'light', false);
+});
+
 // ---- status bar ----
 
 const statusGlyphs = document.getElementById('status-glyphs');

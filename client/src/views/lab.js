@@ -3,6 +3,7 @@
 // else — these polygons are what gets packed into the exported font.
 
 import { el, clear, slider, segmented, svg } from '../ui.js';
+import { applyFont } from '../fonts.js';
 import { state, on, family, setFamily, setAxis, setChain, setSeed, setText } from '../state.js';
 import { FAMILIES, GENRES, defaultAxes } from '../../../shared/catalog.js';
 import { OPERATORS, OPERATOR_BY_ID } from '../../../shared/ops/operators.js';
@@ -69,20 +70,20 @@ export function labView() {
 
   function sourceSection() {
     const fam = family();
-    const chips = el('div', { class: 'chips' },
-      el('button', { class: 'chip', 'aria-pressed': String(!genreFilter), onclick: () => { genreFilter = null; renderPanel(); } }, 'All'),
-      ...GENRES.filter((g) => FAMILIES.some((f) => f.genre === g)).map((g) =>
-        el('button', { class: 'chip', 'aria-pressed': String(genreFilter === g), onclick: () => { genreFilter = g; renderPanel(); } }, g)));
-    const list = el('div', { class: 'family-row' },
-      ...FAMILIES.filter((f) => !genreFilter || f.genre === genreFilter).map((f) =>
-        el('button', { class: 'chip wide', 'aria-pressed': String(f.id === state.project.family), onclick: () => setFamily(f.id) }, f.name)));
+    const pick = el('button', {
+      class: 'source-pick', onclick: () => { tab = 'source'; renderStage(); },
+      title: 'Browse every family',
+    },
+      applyFont(el('span', { class: 'source-pick-name' }, fam.name), { family: fam.id, axes: defaultAxes(fam) }),
+      el('span', { class: 'source-pick-meta' }, `${fam.genre} · ${fam.axes.length} ${fam.axes.length > 1 ? 'axes' : 'axis'}`),
+      el('span', { class: 'source-pick-go' }, 'Change'));
     const axes = el('div', { class: 'group' },
-      ...fam.axes.slice(0, 4).map((a) => slider({
-        label: a.label, min: a.min, max: a.max, step: a.step, value: state.project.axes[a.tag],
+      ...fam.axes.slice(0, 5).map((a) => slider({
+        label: a.label, hint: a.hint, min: a.min, max: a.max, step: a.step, value: state.project.axes[a.tag],
         format: (v) => (a.step < 1 ? Number(v).toFixed(1) : String(Math.round(v))),
         onInput: (v) => setAxis(a.tag, v),
       })));
-    return section('01', 'Source', [chips, list, axes], el('span', { class: 'section-aside' }, fam.name));
+    return section('01', 'Source', [pick, axes]);
   }
 
   function stepCard(step, i) {
@@ -184,12 +185,13 @@ export function labView() {
         el('span', {}, chain().filter((s) => s.on).map((s) => OPERATOR_BY_ID.get(s.op).name).join(' → ') || 'no operators'),
         loading ? el('span', { class: 'meta-look' }, 'reading outlines…') : null),
       el('div', { class: 'tabs', role: 'tablist' },
-        ...[['word', 'Word'], ['alphabet', 'Alphabet']].map(([id, label]) =>
+        ...[['word', 'Word'], ['alphabet', 'Alphabet'], ['source', 'Source']].map(([id, label]) =>
           el('button', { class: 'tab', role: 'tab', 'aria-selected': String(tab === id), onclick: () => { tab = id; renderStage(); } }, label)))));
 
     if (error) { pad.append(el('p', { class: 'hint', style: { color: 'var(--danger)' } }, error)); return; }
     if (!data) { pad.append(el('div', { class: 'loading' }, el('span', { class: 'spinner' }), ' Instancing the master…')); return; }
 
+    if (tab === 'source') return renderSource();
     if (tab === 'alphabet') return renderAlphabet();
 
     const input = el('input', {
@@ -198,6 +200,39 @@ export function labView() {
     });
     const chars = [...new Set([...(p.text || ' ')])].join('');
     pad.append(input, el('div', { class: 'ink-stage' }, svgOf(p.text || ' ', transform(chars), data.kerning)));
+  }
+
+  // Every family, set in itself, at the weight you are working at. Choosing a
+  // typeface by reading its own letters beats reading its name in a chip.
+  function renderSource() {
+    const p = state.project;
+    const sample = p.text || 'Rafale';
+    const chips = el('div', { class: 'chips source-filter' },
+      el('button', { class: 'chip', 'aria-pressed': String(!genreFilter), onclick: () => { genreFilter = null; renderStage(); } }, 'All'),
+      ...GENRES.filter((g) => FAMILIES.some((f) => f.genre === g)).map((g) =>
+        el('button', { class: 'chip', 'aria-pressed': String(genreFilter === g), onclick: () => { genreFilter = g; renderStage(); } }, g)));
+
+    const list = el('div', { class: 'source-list' });
+    for (const f of FAMILIES) {
+      if (genreFilter && f.genre !== genreFilter) continue;
+      // Show each family at the weight being worked at, where it has one.
+      const axes = { ...defaultAxes(f) };
+      if (f.axes.some((a) => a.tag === 'wght') && p.axes.wght != null) {
+        const spec = f.axes.find((a) => a.tag === 'wght');
+        axes.wght = Math.min(spec.max, Math.max(spec.min, p.axes.wght));
+      }
+      list.append(el('button', {
+        class: 'source-row', 'aria-pressed': String(f.id === p.family),
+        onclick: () => { setFamily(f.id); tab = 'word'; renderStage(); },
+      },
+        el('div', { class: 'source-row-head' },
+          el('span', { class: 'source-row-name' }, f.name),
+          el('span', { class: 'source-row-meta' },
+            `${f.genre} · ${f.axes.map((a) => a.label.toLowerCase()).join(', ')}${f.italic ? ' · italic' : ''}`)),
+        applyFont(el('div', { class: 'source-row-sample' }, sample), { family: f.id, axes }),
+        el('p', { class: 'source-row-blurb' }, f.blurb)));
+    }
+    pad.append(chips, list);
   }
 
   // The alphabet can be a few hundred boolean operations: fill it in slices so
