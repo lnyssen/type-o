@@ -13,6 +13,7 @@ import { outlinesFor, WORKING_SET } from '../outlines.js';
 
 const ALPHABET = [...'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789&@?!€.,'];
 let tab = 'word';
+let inverted = false;   // the specimen's polarity, independent of the interface
 let genreFilter = null;
 let openStep = 0;
 
@@ -194,7 +195,14 @@ export function atelierView() {
         loading ? el('span', { class: 'meta-look' }, 'reading outlines…') : null),
       el('div', { class: 'tabs', role: 'tablist' },
         ...[['word', 'Word'], ['alphabet', 'Alphabet'], ['source', 'Source']].map(([id, label]) =>
-          el('button', { class: 'tab', role: 'tab', 'aria-selected': String(tab === id), onclick: () => { tab = id; renderStage(); } }, label)))));
+          el('button', { class: 'tab', role: 'tab', 'aria-selected': String(tab === id), onclick: () => { tab = id; renderStage(); } }, label)),
+        // A typeface does not weigh the same in both polarities; let it be seen
+        // either way without touching the interface's own theme.
+        el('button', {
+          class: 'polarity', title: 'Black on white, or white on black',
+          'aria-pressed': String(inverted),
+          onclick: () => { inverted = !inverted; stage.classList.toggle('inverted', inverted); renderStage(); },
+        }))));
 
     if (error) { pad.append(el('p', { class: 'hint', style: { color: 'var(--danger)' } }, error)); return; }
     if (!data) { pad.append(el('div', { class: 'loading' }, el('span', { class: 'spinner' }), ' Instancing the master…')); return; }

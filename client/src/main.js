@@ -78,6 +78,8 @@ window.addEventListener('keydown', (e) => {
   else if (key === 'e') { e.preventDefault(); setMode('export'); }
 });
 
+document.getElementById('copyright').textContent = `© ${new Date().getFullYear()} LN`;
+
 // ---- theme ----
 
 const themeBtn = document.getElementById('btn-theme');
@@ -127,7 +129,7 @@ fetch('/api/health')
       statusPython.textContent = `${missing} master${missing > 1 ? 's' : ''} missing — run npm run setup:masters`;
       statusPython.style.color = 'var(--danger)';
     } else if (h.python?.ok) {
-      statusPython.textContent = `compiler ready · fontTools ${h.python.fontTools}`;
+      statusPython.textContent = 'compiler ready';
       statusPython.style.color = '';
     } else {
       statusPython.textContent = 'compiler unavailable — run npm run setup:python';

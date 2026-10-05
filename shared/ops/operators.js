@@ -119,8 +119,8 @@ export const OPERATORS = [
   {
     id: 'invert',
     name: 'Invert',
-    stage: 'cut',
-    blurb: 'Knocks the letter out of a solid block instead of drawing it.',
+    stage: 'last',   // anything after it carves the block, not the letter
+    blurb: 'Knocks the letter out of a solid block instead of drawing it. Reads best as the final step.',
     params: [
       num('padding', 'Padding', -40, 400, 60, { em: true, roll: [20, 200] }),
       num('round', 'Rounding', 0, 300, 0, { em: true, roll: [0, 120] }),
@@ -384,7 +384,7 @@ export const OPERATORS = [
 ];
 
 export const OPERATOR_BY_ID = new Map(OPERATORS.map((o) => [o.id, o]));
-export const STAGES = ['mass', 'cut', 'surface', 'finish'];
+export const STAGES = ['mass', 'cut', 'surface', 'finish', 'last'];
 
 export function defaultParams(id) {
   const op = OPERATOR_BY_ID.get(id);
