@@ -1,4 +1,4 @@
-// The .gentype v2 format, the look presets and the export naming rules.
+// The .typeo v3 format, the look presets and the export naming rules.
 
 import test from 'node:test';
 import assert from 'node:assert/strict';
@@ -17,7 +17,7 @@ test('every look points at a real family and stays inside its axes', () => {
   assert.equal(new Set(LOOKS.map((l) => l.name)).size, LOOKS.length, 'two looks share a name');
 });
 
-test('projects round-trip through .gentype', () => {
+test('projects round-trip through .typeo', () => {
   const p = projectFromLook(LOOKS[3], 'Round Trip');
   const back = parseProject(serializeProject(p)).project;
   assert.deepEqual({ ...back }, { ...p });
@@ -25,14 +25,14 @@ test('projects round-trip through .gentype', () => {
 });
 
 test('bad input is coerced instead of crashing', () => {
-  const { project, warnings } = parseProject({ format: 'gentype', fileVersion: 2, name: '  ', family: 'nope', axes: { wght: 1e9, zzzz: 3 }, tracking: '900', oblique: -5 });
+  const { project, warnings } = parseProject({ format: 'typeo', fileVersion: 2, name: '  ', family: 'nope', axes: { wght: 1e9, zzzz: 3 }, tracking: '900', oblique: -5 });
   assert.equal(project.name, 'Untitled');
   assert.equal(project.family, FAMILIES[0].id);
   assert.ok(warnings.length, 'an unknown family should warn');
   assert.deepEqual(Object.keys(project.axes).sort(), FAMILIES[0].axes.map((a) => a.tag).sort());
   assert.ok(project.tracking <= 200 && project.oblique === 0);
-  assert.throws(() => parseProject({ format: 'gentype', fileVersion: 1 }), /skeleton engine/);
-  assert.throws(() => parseProject({ format: 'nope' }), /Not a GenType project/);
+  assert.throws(() => parseProject({ format: 'typeo', fileVersion: 1 }), /skeleton engine/);
+  assert.throws(() => parseProject({ format: 'nope' }), /Not a TYPE-O project/);
 });
 
 test('style names follow the weight and the width', () => {

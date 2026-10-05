@@ -43,7 +43,7 @@ def prepare(body):
         "format": fmt,
         **licence_of(family),
         "note": f"{body.get('familyName')} is a Modified Version of {origin['name']} "
-                f"(© {origin['credit']}), reshaped with GenType. "
+                f"(© {origin['credit']}), reshaped with TYPE-O. "
                 "Licensed under the SIL Open Font License 1.1.",
     }
 

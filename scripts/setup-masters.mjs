@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Downloads the variable masters GenType instantiates. The fonts themselves
+// Downloads the variable masters TYPE-O instantiates. The fonts themselves
 // stay out of git (they are large, and upstream keeps them up to date); each
 // server/masters/<id>/ already holds the METADATA.pb and OFL.txt that say what
 // to fetch and under which licence.

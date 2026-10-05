@@ -59,7 +59,7 @@ test('api/_catalog.json is up to date with shared/catalog.js', () => {
 });
 
 test('the Python function builds the same payload as the Node server', { skip }, () => {
-  const bodies = CASES.map((c) => ({ project: { format: 'gentype', fileVersion: 2, ...newProject(c.name), ...c }, format: 'ttf' }));
+  const bodies = CASES.map((c) => ({ project: { format: 'typeo', fileVersion: 2, ...newProject(c.name), ...c }, format: 'ttf' }));
   const fromPython = python(bodies);
   bodies.forEach((body, i) => {
     const { project } = parseProject(body.project);
@@ -75,7 +75,7 @@ test('the Python function builds the same payload as the Node server', { skip },
 });
 
 test('the Python function refuses what the Node server refuses', { skip }, () => {
-  const bodies = REFUSED.map((c) => ({ project: { format: 'gentype', fileVersion: 2, ...newProject(c.name || 'X'), ...c, name: c.name }, format: 'ttf' }));
+  const bodies = REFUSED.map((c) => ({ project: { format: 'typeo', fileVersion: 2, ...newProject(c.name || 'X'), ...c, name: c.name }, format: 'ttf' }));
   const fromPython = python(bodies);
   bodies.forEach((body, i) => {
     assert.equal(fromPython[i].ok, false, `python accepted ${JSON.stringify(REFUSED[i])}`);

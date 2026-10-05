@@ -1,4 +1,4 @@
-// .gentype projects (v3): a master family, its axis values, a few transforms
+// .typeo projects (v3): a master family, its axis values, a few transforms
 // and the operator chain applied to its outlines. Everything needed to
 // reproduce the exact same font, down to the last accident.
 
@@ -6,7 +6,7 @@ import { FAMILY_BY_ID, FAMILIES, LOOKS, defaultAxes, normalizeAxes, nameProblem 
 import { parseChain } from './ops/chain.js';
 
 export const FILE_VERSION = 3;
-export const FILE_EXTENSION = '.gentype';
+export const FILE_EXTENSION = '.typeo';
 export const FORMATS = ['ttf', 'otf', 'woff', 'woff2'];
 export const CONTENT_TYPES = { ttf: 'font/ttf', otf: 'font/otf', woff: 'font/woff', woff2: 'font/woff2' };
 
@@ -20,7 +20,7 @@ const clamp = (v, lo, hi, d) => (Number.isFinite(+v) && v !== null && v !== '' ?
 export function projectFromLook(look, name = 'Untitled') {
   const family = FAMILY_BY_ID.get(look.family);
   return {
-    format: 'gentype',
+    format: 'typeo',
     fileVersion: FILE_VERSION,
     name,
     version: '1.000',
@@ -48,14 +48,15 @@ export function serializeProject(p) {
 // Accepts an object or JSON text; returns a clean project.
 export function parseProject(input) {
   const data = typeof input === 'string' ? JSON.parse(input) : input;
-  if (!data || data.format !== 'gentype') throw new Error('Not a GenType project');
+  // Files saved before the rename say 'gentype'; they are the same format.
+  if (!data || (data.format !== 'typeo' && data.format !== 'gentype')) throw new Error('Not a TYPE-O project');
   if (Number(data.fileVersion) === 1) throw new Error('This project was made with the old skeleton engine and can’t be opened in this version.');
-  if (Number(data.fileVersion) > FILE_VERSION) throw new Error('This file was made with a newer version of GenType');
+  if (Number(data.fileVersion) > FILE_VERSION) throw new Error('This file was made with a newer version of TYPE-O');
   const family = FAMILY_BY_ID.get(data.family) || FAMILIES[0];
   const warnings = [];
   if (data.family && !FAMILY_BY_ID.has(data.family)) warnings.push(`Unknown family “${data.family}”, using ${family.name}`);
   const project = {
-    format: 'gentype',
+    format: 'typeo',
     fileVersion: FILE_VERSION,
     name: typeof data.name === 'string' && data.name.trim() ? data.name.trim().slice(0, 40) : 'Untitled',
     version: /^\d+\.\d{1,3}$/.test(String(data.version)) ? String(data.version) : '1.000',
@@ -112,7 +113,7 @@ export function exportRequest(project, format) {
       axes: project.axes,
       oblique: project.italic ? 0 : project.oblique,
       tracking: project.tracking,
-      note: `${project.name} is a Modified Version of ${family.name} (© ${family.credit}), generated with GenType. Licensed under the SIL Open Font License 1.1.`,
+      note: `${project.name} is a Modified Version of ${family.name} (© ${family.credit}), generated with TYPE-O. Licensed under the SIL Open Font License 1.1.`,
     },
   };
 }

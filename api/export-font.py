@@ -1,4 +1,4 @@
-"""Vercel serverless function: the whole GenType export API.
+"""Vercel serverless function: the whole TYPE-O export API.
 
 On Vercel there is no long-running Node process to spawn Python from, so this
 function does what server/index.js does locally — validate the project, pick
@@ -132,7 +132,7 @@ def build(body):
         "axes": axes,
         "oblique": oblique,
         "tracking": tracking,
-        "note": "%s is a Modified Version of %s (\u00a9 %s), generated with GenType. "
+        "note": "%s is a Modified Version of %s (\u00a9 %s), generated with TYPE-O. "
                 "Licensed under the SIL Open Font License 1.1." % (name, origin["name"], origin["credit"]),
     }
     filename = "%s-%s.%s" % (name.replace(" ", ""), style.replace(" ", ""), fmt)

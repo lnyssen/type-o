@@ -96,14 +96,14 @@ def apply_tracking(font, units):
             hmtx[name] = (max(0, adv + units), lsb)
 
 
-def rename(font, family, style, version, gentype_note):
+def rename(font, family, style, version, note):
     ribbi = style in RIBBI
     legacy_family = family if ribbi else f"{family} {style}"
     legacy_style = style if ribbi else "Regular"
     values = {
         1: legacy_family,
         2: legacy_style,
-        3: f"{version};GENT;{ps_name(family, style)}",
+        3: f"{version};TYPO;{ps_name(family, style)}",
         4: f"{family} {style}",
         6: ps_name(family, style),
     }
@@ -116,7 +116,7 @@ def rename(font, family, style, version, gentype_note):
         name.setName(text, nid, 3, 1, 0x409)
         name.setName(text, nid, 1, 0, 0)
     name.setName(f"Version {version}", 5, 3, 1, 0x409)
-    desc = gentype_note
+    desc = note
     name.setName(desc, 10, 3, 1, 0x409)
     if "CFF " in font:
         font["CFF "].cff.fontNames = [ps_name(family, style)]
@@ -183,7 +183,7 @@ def build(p):
     version = str(p.get("version") or "1.000")
     italic = bool(p.get("italic")) or oblique > 0
     set_style_bits(font, p.get("weightClass", 400), p.get("widthClass", 5), italic, style in ("Bold", "Bold Italic"))
-    rename(font, family, style, version, p.get("note", "Generated with GenType from an SIL Open Font License master."))
+    rename(font, family, style, version, p.get("note", "Generated with TYPE-O from an SIL Open Font License master."))
 
     fmt = p["format"]
     if fmt == "otf":

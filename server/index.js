@@ -1,4 +1,4 @@
-// GenType server: the built interface, the variable masters (light preview
+// TYPE-O server: the built interface, the variable masters (light preview
 // copies for the browser) and the export API that instantiates them.
 
 import express from 'express';
@@ -12,7 +12,7 @@ import { runPython, pythonStatus } from './compile.js';
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, '..');
 const MASTERS = path.join(here, 'masters');
-const PORT = Number(process.env.GENTYPE_PORT || 5188);
+const PORT = Number(process.env.TYPEO_PORT || 5188);
 
 const app = express();
 app.use(express.json({ limit: '12mb' }));  // an operator font ships its geometry
@@ -95,7 +95,7 @@ app.post('/api/build-font', async (req, res) => {
     ...body,
     format,
     ...licenceOf(fam.id),
-    note: `${body.familyName} is a Modified Version of ${fam.name} (© ${fam.credit}), reshaped with GenType. `
+    note: `${body.familyName} is a Modified Version of ${fam.name} (© ${fam.credit}), reshaped with TYPE-O. `
       + 'Licensed under the SIL Open Font License 1.1.',
   };
   try {
@@ -104,8 +104,8 @@ app.post('/api/build-font', async (req, res) => {
     const style = String(body.styleName || 'Regular').replace(/\s+/g, '');
     res.setHeader('Content-Type', CONTENT_TYPES[format]);
     res.setHeader('Content-Disposition', `attachment; filename="${clean}-${style}.${format}"`);
-    res.setHeader('X-GenType-Glyphs', String(info.glyphs ?? ''));
-    res.setHeader('X-GenType-Kern', String(info.kernPairs ?? ''));
+    res.setHeader('X-TypeO-Glyphs', String(info.glyphs ?? ''));
+    res.setHeader('X-TypeO-Kern', String(info.kernPairs ?? ''));
     res.send(data);
   } catch (e) {
     res.status(500).json({ error: String(e.message || e) });
@@ -117,7 +117,7 @@ app.post('/api/export-font', async (req, res) => {
   if (!FORMATS.includes(format)) return res.status(400).json({ error: `Format must be one of ${FORMATS.join(', ')}` });
   let job;
   try {
-    const { project } = parseProject({ format: 'gentype', fileVersion: 2, ...(req.body?.project || {}) });
+    const { project } = parseProject({ format: 'typeo', fileVersion: 2, ...(req.body?.project || {}) });
     job = exportRequest(project, format);
   } catch (e) {
     return res.status(400).json({ error: String(e.message || e) });
@@ -128,7 +128,7 @@ app.post('/api/export-font', async (req, res) => {
     const { data, info } = await runPython(path.join(here, 'python', 'instance_font.py'), [], JSON.stringify({ ...job.payload, master }));
     res.setHeader('Content-Type', CONTENT_TYPES[format]);
     res.setHeader('Content-Disposition', `attachment; filename="${job.fileName}"`);
-    res.setHeader('X-GenType-Seconds', String(info.seconds ?? ''));
+    res.setHeader('X-TypeO-Seconds', String(info.seconds ?? ''));
     res.send(data);
   } catch (e) {
     res.status(500).json({ error: String(e.message || e) });
@@ -140,7 +140,7 @@ if (fs.existsSync(dist)) {
   app.use(express.static(dist, { maxAge: '1h', index: 'index.html' }));
   app.use((req, res, next) => (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/masters') ? res.sendFile(path.join(dist, 'index.html')) : next()));
 } else {
-  app.get('/', (_req, res) => res.type('html').send('<h1>GenType API</h1><p>Run <code>npm run dev</code>, or <code>npm run build</code> then <code>npm start</code>.</p>'));
+  app.get('/', (_req, res) => res.type('html').send('<h1>TYPE-O API</h1><p>Run <code>npm run dev</code>, or <code>npm run build</code> then <code>npm start</code>.</p>'));
 }
 
-app.listen(PORT, () => console.log(`GenType API on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`TYPE-O API on http://localhost:${PORT}`));

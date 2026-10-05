@@ -1,4 +1,4 @@
-/* GenType — Swiss structure in the laurentnyssen.be palette.
+/* TYPE-O — Swiss structure in the laurentnyssen.be palette.
    Near-black ground, warm off-white type, one violet accent. Hairline rules
    carry the structure; the generated typeface is always the loudest thing. */
 
@@ -62,13 +62,7 @@ a { color: inherit; text-decoration: none; }
 }
 
 .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
-.mark {
-  width: 26px; height: 26px; flex: none;
-  display: grid; place-items: center;
-  border-radius: 7px;
-  background: var(--accent);
-  font-weight: 700; font-size: 15px; letter-spacing: -0.04em;
-}
+.mark { width: 26px; height: 26px; flex: none; display: block; }
 .wordmark { font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; font-size: 16px; }
 .project-name {
   min-width: 0; width: 200px;

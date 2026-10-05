@@ -1,4 +1,8 @@
-# GenType
+# TYPE-O
+
+<img src="docs/mark.svg" width="56" alt="">
+
+*A typo, on purpose.*
 
 Open-source **generative typography**: take a professionally drawn variable typeface, run its outlines through a stack of destructive operators — fracture, swell, stencil, halftone, melt — and export the result as a real `.ttf`, `.otf`, `.woff` or `.woff2`, with its metrics, its kerning and its accents intact.
 
@@ -6,7 +10,7 @@ Press **Roll** and you get a typeface nobody has. Every curve in it descends fro
 
 ## Why
 
-A parametric engine that draws letters from scratch hits a quality ceiling you can see immediately next to a real typeface — GenType had one, and it is still in `shared/engine/` (tagged `skeleton-engine`) as a record of that. Instancing a variable font instead gives you flawless letters, but nothing surprising: move a slider called Weight and you get the same face, bolder.
+A parametric engine that draws letters from scratch hits a quality ceiling you can see immediately next to a real typeface — TYPE-O had one, and it is still in `shared/engine/` (tagged `skeleton-engine`) as a record of that. Instancing a variable font instead gives you flawless letters, but nothing surprising: move a slider called Weight and you get the same face, bolder.
 
 So the master is the *material*, not the product. The letterforms, the spacing and the kerning come from someone who did the work; the operators then cut, inflate, perforate and melt that geometry into something else. The quality floor is a professional drawing, the ceiling is whatever the chain does — and because the chain runs in the browser on the real outlines, **the polygons on screen are the ones packed into the file**.
 
@@ -74,7 +78,7 @@ Order is the point. Ring after Halftone draws hollow dots; Halftone after Ring s
 - **Lab** — `01 Source` (the family and its axes), `02 Chain` (the operator stack: reorder it, mute a step, open one to tune it), `03 Chance` (roll, reseed, and a legibility meter). The stage draws your word live from the real outlines, or the whole alphabet.
 - **Export** — name it, pick a format, download it, or load the compiled file straight into the page. You can also save a **specimen sheet** as SVG, or an **animation** as WebM: every setting that has an "off" value ramps from there to yours, so the clip plays the chain coming on. The licence card links to the master's `OFL.txt`, and the recipe panel shows the exact chain and seed.
 
-Projects autosave to the browser and save as `.gentype` files — family, axes, chain, seed and all, so a font can be rebuilt exactly. `Cmd/Ctrl+S` saves, `Cmd/Ctrl+O` opens, `Cmd/Ctrl+E` jumps to Export. Files from before the operators (v2) still open; they just arrive with an empty chain.
+Projects autosave to the browser and save as `.typeo` files — family, axes, chain, seed and all, so a font can be rebuilt exactly. `Cmd/Ctrl+S` saves, `Cmd/Ctrl+O` opens, `Cmd/Ctrl+E` jumps to Export. Files from before the operators (v2) still open; they just arrive with an empty chain.
 
 ## The families
 
@@ -95,14 +99,14 @@ Axes are read from each font's `fvar` and labelled in `shared/catalog.js` — we
 
 ## Licensing — read this before you ship
 
-Everything GenType exports is a **Modified Version** of an OFL font, so your export is under the [SIL Open Font License 1.1](https://openfontlicense.org) too. In practice:
+Everything TYPE-O exports is a **Modified Version** of an OFL font, so your export is under the [SIL Open Font License 1.1](https://openfontlicense.org) too. In practice:
 
 - Use it anywhere: print, web, apps, logos, commercial work, client jobs.
 - Share it, embed it, bundle it with software.
 - Don't sell the font file on its own, and keep it under the OFL.
-- Don't use the original family name, or a Reserved Font Name — GenType refuses those names at export, and the original copyright and license stay embedded in the file.
+- Don't use the original family name, or a Reserved Font Name — TYPE-O refuses those names at export, and the original copyright and license stay embedded in the file.
 
-The GenType **code** is MIT.
+The TYPE-O **code** is MIT.
 
 ## Deploying
 
@@ -139,7 +143,7 @@ projects identically.
 | `POST /api/build-font` | The polygons the browser produced → the font binary. |
 | `POST /api/export-font` | `{ project, format }` → a plain instance of the master, no operators. |
 
-`project` is the contents of a `.gentype` file; it is validated and clamped on the way in.
+`project` is the contents of a `.typeo` file; it is validated and clamped on the way in.
 
 ```bash
 curl -X POST localhost:5188/api/export-font \
@@ -158,7 +162,7 @@ shared/ops/simplify.js  Ramer–Douglas–Peucker, so an export is kilobytes
 shared/ops/build.js     outlines + chain → the job the builder packs
 shared/ops/render.js    contours → SVG path, and a kerned line of them
 shared/catalog.js       families, axes, labels, looks, naming rules
-shared/project.js       .gentype v3 — family, axes, chain, seed
+shared/project.js       .typeo v3 — family, axes, chain, seed
 client/src/views/lab.js the chain, the stage, the roll
 client/src/animate.js   records the chain coming on, as WebM
 client/src/outlines.js  one fetch per family + axes, then everything is local
@@ -195,11 +199,11 @@ npm test
 ```
 
 `api/_catalog.json` is current, the Node and Python export paths build the same
-payload and refuse the same names, look presets stay inside their axis ranges, `.gentype` files round-trip, malformed projects are coerced rather than crashing, style names follow weight and width, forbidden names are refused — and, when Python and the masters are installed, all four formats compile into loadable fonts with no `fvar` left, the right names and a real italic angle.
+payload and refuse the same names, look presets stay inside their axis ranges, `.typeo` files round-trip, malformed projects are coerced rather than crashing, style names follow weight and width, forbidden names are refused — and, when Python and the masters are installed, all four formats compile into loadable fonts with no `fvar` left, the right names and a real italic angle.
 
 ## Known limits
 
-- Each export is a static instance; GenType doesn't emit variable fonts.
+- Each export is a static instance; TYPE-O doesn't emit variable fonts.
 - Operator outlines are polygons, not curves. At 0.35‰ of the em the facets are far below what any rasteriser shows, but a `.ttf` from a chain has more points than one from a plain instance (tens of kilobytes rather than a few).
 - The legibility guard protects a roll, not a chain you build by hand — drag Melt to 400‰ and the letter will leave.
 - Latin only — the catalogue's masters cover Latin (many include Greek and Cyrillic, which are kept but not previewed).
@@ -210,7 +214,7 @@ payload and refuse the same names, look presets stay inside their axis ranges, `
 
 ## The skeleton engine
 
-GenType started as a from-scratch outline engine: METAFONT-style skeletons, Hobby splines, stroke expansion, optical spacing. It works, and it is still in `shared/engine/` and `shared/glyphs/` (tagged `skeleton-engine`), but stroke-expanded skeletons have a quality ceiling that shows immediately next to a professionally drawn face — which is why the tool now builds on real masters.
+TYPE-O started as a from-scratch outline engine: METAFONT-style skeletons, Hobby splines, stroke expansion, optical spacing. It works, and it is still in `shared/engine/` and `shared/glyphs/` (tagged `skeleton-engine`), but stroke-expanded skeletons have a quality ceiling that shows immediately next to a professionally drawn face — which is why the tool now builds on real masters.
 
 ## License
 

@@ -8,10 +8,10 @@ import fs from 'node:fs';
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const VENV = path.join(here, '.venv', 'bin', 'python');
-const TIMEOUT_MS = Number(process.env.GENTYPE_COMPILE_TIMEOUT || 60000);
+const TIMEOUT_MS = Number(process.env.TYPEO_COMPILE_TIMEOUT || 60000);
 
 export function pythonBin() {
-  if (process.env.GENTYPE_PYTHON) return process.env.GENTYPE_PYTHON;
+  if (process.env.TYPEO_PYTHON) return process.env.TYPEO_PYTHON;
   return fs.existsSync(VENV) ? VENV : 'python3';
 }
 

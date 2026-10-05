@@ -1,7 +1,7 @@
 {
-  "name": "gentype",
+  "name": "type-o",
   "version": "0.1.0",
-  "description": "Open-source generative typography: shape professionally designed variable masters and export production fonts (.ttf, .otf, .woff, .woff2).",
+  "description": "Generative typography: run real variable-font outlines through a stack of destructive operators and export a real font.",
   "license": "MIT",
   "type": "module",
   "scripts": {

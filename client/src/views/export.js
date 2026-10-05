@@ -79,10 +79,10 @@ export function exportView() {
       if (download) {
         save(blob, name);
         toast(`${name} — ${kb} KB`, 'ok');
-        clear(status).append(`${name} · ${kb} KB · ${secs}s · ${res.headers.get('X-GenType-Glyphs') || '?'} glyphs`);
+        clear(status).append(`${name} · ${kb} KB · ${secs}s · ${res.headers.get('X-TypeO-Glyphs') || '?'} glyphs`);
       } else {
         if (testFace) document.fonts.delete(testFace);
-        testFace = new FontFace('GenTypeExportTest', await blob.arrayBuffer());
+        testFace = new FontFace('TypeOExportTest', await blob.arrayBuffer());
         await testFace.load();
         document.fonts.add(testFace);
         live = true;
@@ -216,7 +216,7 @@ export function exportView() {
     const fam = family();
     const label = chain().map((s) => OPERATOR_BY_ID.get(s.op).name).join(' → ') || 'no operators';
     const sample = live
-      ? el('div', { class: 'export-sample live', style: { fontFamily: 'GenTypeExportTest', fontSize: '64px' } }, p.text || 'Rafale')
+      ? el('div', { class: 'export-sample live', style: { fontFamily: 'TypeOExportTest', fontSize: '64px' } }, p.text || 'Rafale')
       : el('div', { class: 'export-preview' });
 
     pad.append(
@@ -239,7 +239,7 @@ export function exportView() {
           el('pre', {}, chain().length
             ? chain().map((s, i) => `${i + 1}. ${OPERATOR_BY_ID.get(s.op).name}\n   ${Object.entries(s.params).map(([k, v]) => `${k} ${v}`).join('  ')}`).join('\n')
             : 'No operators — the master is instanced as it is.'),
-          el('p', { class: 'hint' }, 'Saved inside the .gentype file, so this exact font can be rebuilt.'))),
+          el('p', { class: 'hint' }, 'Saved inside the .typeo file, so this exact font can be rebuilt.'))),
     );
 
     if (!live) drawPreview(sample);

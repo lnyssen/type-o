@@ -1,5 +1,5 @@
 // Master catalogue: professionally designed variable fonts (SIL Open Font
-// License) that GenType instantiates and transforms. Files live in
+// License) that TYPE-O instantiates and transforms. Files live in
 // server/masters/<id>/{roman,italic}.ttf with their OFL.txt.
 //
 // Axis labels are what the interface shows; `hint` explains what the axis

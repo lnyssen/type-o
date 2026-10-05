@@ -28,7 +28,7 @@ const chain = rollLegibleChain(seed, { glyph: data.glyphs.R, char: 'R', metrics:
 console.log('chain:', chain.map((s) => s.op).join(' → '));
 
 for (const format of ['ttf', 'otf', 'woff2']) {
-  const job = buildJob(data, chain, { seed, familyName: 'Rafale Lab', styleName: 'Bold', format, note: 'Built by GenType from Inter (OFL 1.1).' });
+  const job = buildJob(data, chain, { seed, familyName: 'Rafale Lab', styleName: 'Bold', format, note: 'Built by TYPE-O from Inter (OFL 1.1).' });
   if (format === 'ttf') console.log('geometry:', countPoints(job));
   const out = py('build_font.py', JSON.stringify(job));
   const info = JSON.parse(out.stderr.toString('utf8').trim().split('\n').pop());

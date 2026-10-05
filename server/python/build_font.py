@@ -92,7 +92,7 @@ def build(job):
     fb.setupNameTable({
         "familyName": family,
         "styleName": style,
-        "uniqueFontIdentifier": f"{version};GENT;{ps_name(family, style)}",
+        "uniqueFontIdentifier": f"{version};TYPO;{ps_name(family, style)}",
         "fullName": f"{family} {style}",
         "psName": ps_name(family, style),
         "version": f"Version {version}",
@@ -109,7 +109,7 @@ def build(job):
         usWeightClass=int(job.get("weightClass") or 400),
         usWidthClass=int(job.get("widthClass") or 5),
         fsType=0,
-        achVendID="GENT",
+        achVendID="TYPO",
     )
     fb.setupPost(isFixedPitch=0, italicAngle=0)
     font = fb.font

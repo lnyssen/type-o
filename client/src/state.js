@@ -4,7 +4,7 @@
 import { newProject, serializeProject, parseProject, projectFromLook } from '../../shared/project.js';
 import { FAMILY_BY_ID, defaultAxes, normalizeAxes } from '../../shared/catalog.js';
 
-const STORAGE_KEY = 'gentype.project.v2';
+const STORAGE_KEY = 'typeo.project.v3';
 const listeners = new Map();
 
 export const state = {
