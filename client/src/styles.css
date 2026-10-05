@@ -162,7 +162,7 @@ a { color: inherit; text-decoration: none; }
 .panel {
   border-right: 2px solid var(--text);
   overflow-y: auto;
-  padding: 8px 20px 28px;
+  padding: 0 20px 28px;
   display: flex;
   flex-direction: column;
   gap: 22px;
@@ -195,6 +195,9 @@ h3 { font-size: 22px; letter-spacing: -0.01em; -webkit-text-stroke: 0.012em curr
 /* ---------- panel sections ---------- */
 
 .section { border-top: 2px solid var(--text); gap: 0; margin: 0 -20px; padding: 0 20px; }
+/* The top bar already draws a rule there; a second one right under it reads as
+   a mistake. */
+.panel > .section:first-child { border-top: none; }
 .section + .section { margin-top: -22px; }
 .section-head {
   width: 100%;
