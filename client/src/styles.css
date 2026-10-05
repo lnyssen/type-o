@@ -178,26 +178,6 @@ a { color: inherit; text-decoration: none; }
 .panel > * { flex: 0 0 auto; }
 
 .stage { overflow: auto; position: relative; background: var(--bg); color: var(--text); min-width: 0; scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
-/* The specimen can be flipped without flipping the interface. */
-.stage.inverted { background: var(--text); color: var(--bg); }
-.stage.inverted .stage-head { border-bottom-color: var(--bg); }
-.stage.inverted .meta, .stage.inverted .sample-input, .stage.inverted .label,
-.stage.inverted .hint, .stage.inverted .source-row-meta, .stage.inverted .source-row-blurb { color: currentColor; opacity: 0.55; }
-.stage.inverted .meta-name, .stage.inverted .source-row-name { color: currentColor; opacity: 1; }
-.stage.inverted .tab { color: currentColor; opacity: 0.55; }
-.stage.inverted .tab[aria-selected="true"] { background: var(--bg); color: var(--text); opacity: 1; }
-.stage.inverted .chip { color: currentColor; border-color: currentColor; }
-.stage.inverted .chip[aria-pressed="true"] { background: var(--bg); color: var(--text); }
-.stage.inverted .source-list, .stage.inverted .source-row { border-color: var(--bg); }
-.stage.inverted .ink-grid { background: var(--bg); border-color: var(--bg); }
-.stage.inverted .ink-cell { background: var(--text); }
-
-/* Half black, half white: the control shows what it does. */
-.polarity {
-  width: 22px; height: 22px; padding: 0; cursor: pointer; margin-left: 8px;
-  border: 2px solid currentColor; background: linear-gradient(90deg, currentColor 50%, transparent 50%);
-}
-.polarity:hover { opacity: 0.7; }
 .stage-pad { padding: 28px 36px 64px; min-height: 100%; }
 
 /* Instrument Serif carries the voice; Satoshi carries the work. */
