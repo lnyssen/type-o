@@ -68,9 +68,12 @@ export function applyLook(look) {
   changed('look');
 }
 
-export function setChain(chain) {
+// `reason` tells the views whether the stack's shape changed or only a
+// setting: rebuilding the panel on a setting would destroy the slider the
+// finger is on.
+export function setChain(chain, reason = 'chain') {
   state.project.chain = chain;
-  changed('chain');
+  changed(reason);
 }
 
 export function setSeed(seed) {

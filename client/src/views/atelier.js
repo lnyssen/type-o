@@ -48,7 +48,7 @@ export function atelierView() {
     return out;
   }
 
-  async function load() {
+  async function load({ panel = true } = {}) {
     const p = state.project;
     const mine = ++token;
     loading = true; error = null;
@@ -61,7 +61,7 @@ export function atelierView() {
       if (mine !== token) return;
       error = String(e.message || e);
     } finally {
-      if (mine === token) { loading = false; renderPanel(); renderStage(); }
+      if (mine === token) { loading = false; if (panel) renderPanel(); renderStage(); }
     }
   }
 
@@ -120,9 +120,10 @@ export function atelierView() {
     return el('div', { class: `step${step.on ? '' : ' muted'}${open ? ' open' : ''}` }, head, body);
   }
 
-  const replace = (next) => setChain(next);
+  const replace = (next, reason) => setChain(next, reason);
   const update = (i, patch) => replace(chain().map((s, j) => (j === i ? { ...s, ...patch } : s)));
-  const setParam = (i, key, value) => replace(chain().map((s, j) => (j === i ? { ...s, params: { ...s.params, [key]: value } } : s)));
+  const setParam = (i, key, value) =>
+    replace(chain().map((s, j) => (j === i ? { ...s, params: { ...s.params, [key]: value } } : s)), 'chain-params');
   const remove = (i) => { openStep = -1; replace(chain().filter((_, j) => j !== i)); };
   function move(i, d) {
     const next = [...chain()];
@@ -155,6 +156,16 @@ export function atelierView() {
         el('div', { class: 'meter-bar' }, el('i', { style: { width: `${Math.max(0, Math.min(1, score)) * 100}%` } })),
         el('span', { class: 'hint' }, `Legibility ${score.toFixed(2)}`)),
     ]);
+  }
+
+  // The legibility reading is the only part of the panel a setting changes.
+  function updateMeter() {
+    const bar = panel.querySelector('.meter-bar i');
+    const label = panel.querySelector('.meter .hint');
+    if (!bar || !data || !chain().length) return;
+    const score = legibility(probe().glyph, transform('R').R || probe().glyph);
+    bar.style.width = `${Math.max(0, Math.min(1, score)) * 100}%`;
+    label.textContent = `Legibility ${score.toFixed(2)}`;
   }
 
   function roll() {
@@ -270,10 +281,29 @@ export function atelierView() {
 
   renderPanel();
   load();
+  let reload = null;
   const off = on('project', ({ reason }) => {
-    if (reason === 'family' || reason === 'axes' || reason === 'italic') { data = null; load(); renderPanel(); return; }
-    if (reason === 'text' && [...state.project.text].some((c) => !WORKING_SET.includes(c) && !(data?.glyphs[c]))) { load(); return; }
+    if (reason === 'family' || reason === 'italic') { data = null; load(); renderPanel(); return; }
+
+    if (reason === 'axes') {
+      // New axes need new outlines from the server, but the panel must not be
+      // rebuilt: that would tear the slider out from under the finger. Keep
+      // the outlines that are on screen and fetch once the drag settles.
+      clearTimeout(reload);
+      reload = setTimeout(() => load({ panel: false }), 260);
+      renderStage();
+      return;
+    }
+
+    if (reason === 'text' && [...state.project.text].some((c) => !WORKING_SET.includes(c) && !(data?.glyphs[c]))) {
+      clearTimeout(reload);
+      reload = setTimeout(() => load({ panel: false }), 260);
+      return;
+    }
+
+    // Only a change to the stack's shape needs the panel redrawn.
     if (reason === 'chain' || reason === 'seed') renderPanel();
+    else if (reason === 'chain-params') updateMeter();
     renderStage();
   });
 
