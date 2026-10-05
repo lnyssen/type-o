@@ -26,7 +26,7 @@ const bottom = translate(intersect(ring, [rect(-S, -S, S * 2, c - GAP / 2)]), -S
 const d = pathData(union(top, bottom));
 
 const mark = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}"><path fill="currentColor" d="${d}"/></svg>`;
-const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}"><rect width="${S}" height="${S}" rx="7" fill="#000"/><path fill="#fff" d="${d}"/></svg>`;
+const favicon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${S} ${S}"><rect width="${S}" height="${S}" fill="#000"/><path fill="#fff" d="${d}"/></svg>`;
 
 const root = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 writeFileSync(path.join(root, 'docs/mark.svg'), favicon);
