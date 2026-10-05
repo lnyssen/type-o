@@ -1,6 +1,6 @@
-// The lab: real outlines from a master, a stack of destructive operators, and
-// a word rendered live from the result. Nothing here is a preview of something
-// else — these polygons are what gets packed into the exported font.
+// The atelier: real outlines from a master, a stack of destructive operators,
+// and a word rendered live from the result. Nothing here is a preview of
+// something else — these polygons are what gets packed into the exported font.
 
 import { el, clear, slider, segmented, svg } from '../ui.js';
 import { applyFont } from '../fonts.js';
@@ -16,7 +16,15 @@ let tab = 'word';
 let genreFilter = null;
 let openStep = 0;
 
-export function labView() {
+// Roboto Flex has thirteen axes; naming them all turns the row into a wall.
+function axisSummary(f) {
+  const names = f.axes.map((a) => a.label.toLowerCase());
+  const shown = names.slice(0, 4).join(', ');
+  const rest = names.length - 4;
+  return `${f.genre} · ${shown}${rest > 0 ? ` +${rest} more` : ''}${f.italic ? ' · italic' : ''}`;
+}
+
+export function atelierView() {
   const panel = el('div', { class: 'panel' });
   const stage = el('div', { class: 'stage' });
   const pad = el('div', { class: 'stage-pad' });
@@ -75,8 +83,8 @@ export function labView() {
       title: 'Browse every family',
     },
       applyFont(el('span', { class: 'source-pick-name' }, fam.name), { family: fam.id, axes: defaultAxes(fam) }),
-      el('span', { class: 'source-pick-meta' }, `${fam.genre} · ${fam.axes.length} ${fam.axes.length > 1 ? 'axes' : 'axis'}`),
-      el('span', { class: 'source-pick-go' }, 'Change'));
+      el('span', { class: 'source-pick-go' }, 'Change'),
+      el('span', { class: 'source-pick-meta' }, `${fam.genre} · ${fam.axes.length} ${fam.axes.length > 1 ? 'axes' : 'axis'}`));
     const axes = el('div', { class: 'group' },
       ...fam.axes.slice(0, 5).map((a) => slider({
         label: a.label, hint: a.hint, min: a.min, max: a.max, step: a.step, value: state.project.axes[a.tag],
@@ -126,23 +134,23 @@ export function labView() {
   function chainSection() {
     const steps = chain().length
       ? chain().map(stepCard)
-      : [el('p', { class: 'hint' }, 'No operators yet — add one, or roll a chain below.')];
+      : [el('p', { class: 'hint' }, 'No operators yet — add one, or roll a stack below.')];
     const menu = el('div', { class: 'add-menu' },
       ...OPERATORS.map((op) => el('button', {
         class: 'chip', title: op.blurb,
         onclick: () => { openStep = chain().length; replace(addStep(chain(), op.id)); },
       }, `+ ${op.name}`)));
-    return section('02', 'Chain', [el('div', { class: 'steps' }, ...steps), menu],
+    return section('02', 'Stack', [el('div', { class: 'steps' }, ...steps), menu],
       el('span', { class: 'section-aside' }, `${chain().filter((s) => s.on).length} active`));
   }
 
   function rollSection() {
     const score = data && chain().length ? legibility(probe().glyph, transform('R').R || probe().glyph) : null;
-    return section('03', 'Chance', [
-      el('div', { class: 'row' },
-        el('button', { class: 'btn primary grow', onclick: roll }, '⚄  Roll a typeface'),
-        el('button', { class: 'btn', title: 'Same chain, new accidents', onclick: () => setSeed(state.project.seed + 1) }, 'Seed +')),
-      slider({ label: 'Seed', min: 0, max: 999, step: 1, value: state.project.seed % 1000, onInput: (v) => setSeed(v) }),
+    return section('03', 'Random', [
+      el('button', { class: 'btn primary wide', onclick: roll }, 'Roll a typeface'),
+      el('div', { class: 'row seed-row' },
+        slider({ label: 'Seed', min: 0, max: 999, step: 1, value: state.project.seed % 1000, onInput: (v) => setSeed(v) }),
+        el('button', { class: 'btn small', title: 'Same stack, new accidents', onclick: () => setSeed(state.project.seed + 1) }, 'Next')),
       score === null ? null : el('div', { class: 'meter' },
         el('div', { class: 'meter-bar' }, el('i', { style: { width: `${Math.max(0, Math.min(1, score)) * 100}%` } })),
         el('span', { class: 'hint' }, `Legibility ${score.toFixed(2)}`)),
@@ -227,8 +235,7 @@ export function labView() {
       },
         el('div', { class: 'source-row-head' },
           el('span', { class: 'source-row-name' }, f.name),
-          el('span', { class: 'source-row-meta' },
-            `${f.genre} · ${f.axes.map((a) => a.label.toLowerCase()).join(', ')}${f.italic ? ' · italic' : ''}`)),
+          el('span', { class: 'source-row-meta' }, axisSummary(f))),
         applyFont(el('div', { class: 'source-row-sample' }, sample), { family: f.id, axes }),
         el('p', { class: 'source-row-blurb' }, f.blurb)));
     }

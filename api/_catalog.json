@@ -337,5 +337,307 @@
         700
       ]
     }
+  },
+  "worksans": {
+    "name": "Work Sans",
+    "credit": "The Work Sans Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        900
+      ]
+    }
+  },
+  "figtree": {
+    "name": "Figtree",
+    "credit": "The Figtree Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        300,
+        300,
+        900
+      ]
+    }
+  },
+  "schibstedgrotesk": {
+    "name": "Schibsted Grotesk",
+    "credit": "The Schibsted-Grotesk Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        900
+      ]
+    }
+  },
+  "dmsans": {
+    "name": "DM Sans",
+    "credit": "The DM Sans Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "opsz": [
+        9,
+        9,
+        40
+      ],
+      "wght": [
+        100,
+        400,
+        1000
+      ]
+    }
+  },
+  "outfit": {
+    "name": "Outfit",
+    "credit": "The Outfit Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ]
+    }
+  },
+  "sora": {
+    "name": "Sora",
+    "credit": "The Sora Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        400,
+        800
+      ]
+    }
+  },
+  "manrope": {
+    "name": "Manrope",
+    "credit": "The Manrope Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        200,
+        200,
+        800
+      ]
+    }
+  },
+  "literata": {
+    "name": "Literata",
+    "credit": "The Literata Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "opsz": [
+        7,
+        12,
+        72
+      ],
+      "wght": [
+        200,
+        400,
+        900
+      ]
+    }
+  },
+  "newsreader": {
+    "name": "Newsreader",
+    "credit": "The Newsreader Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        200,
+        400,
+        800
+      ],
+      "opsz": [
+        6,
+        18,
+        72
+      ]
+    }
+  },
+  "piazzolla": {
+    "name": "Piazzolla",
+    "credit": "The Piazzolla Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ],
+      "opsz": [
+        8,
+        30,
+        30
+      ]
+    }
+  },
+  "lora": {
+    "name": "Lora",
+    "credit": "The Lora Project Authors",
+    "italic": true,
+    "rfn": [
+      "Lora"
+    ],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        700
+      ]
+    }
+  },
+  "bricolagegrotesque": {
+    "name": "Bricolage Grotesque",
+    "credit": "The Bricolage Grotesque Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "opsz": [
+        12,
+        96,
+        96
+      ],
+      "wght": [
+        200,
+        800,
+        800
+      ],
+      "wdth": [
+        75,
+        100,
+        100
+      ]
+    }
+  },
+  "bigshouldersdisplay": {
+    "name": "Big Shoulders Display",
+    "credit": "The Big Shoulders Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ]
+    }
+  },
+  "syne": {
+    "name": "Syne",
+    "credit": "The Syne Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        400,
+        400,
+        800
+      ]
+    }
+  },
+  "tourney": {
+    "name": "Tourney",
+    "credit": "The Tourney Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ],
+      "wdth": [
+        75,
+        100,
+        125
+      ]
+    }
+  },
+  "climatecrisis": {
+    "name": "Climate Crisis",
+    "credit": "The Climate Crisis Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "YEAR": [
+        1979,
+        1979,
+        2050
+      ]
+    }
+  },
+  "kablammo": {
+    "name": "Kablammo",
+    "credit": "The Kablammo Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "MORF": [
+        0,
+        0,
+        60
+      ]
+    }
+  },
+  "gluten": {
+    "name": "Gluten",
+    "credit": "The Gluten Project Authors",
+    "italic": false,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ],
+      "slnt": [
+        -13,
+        0,
+        13
+      ]
+    }
+  },
+  "grandstander": {
+    "name": "Grandstander",
+    "credit": "The Grandstander Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        100,
+        100,
+        900
+      ]
+    }
+  },
+  "rubik": {
+    "name": "Rubik",
+    "credit": "The Rubik Project Authors",
+    "italic": true,
+    "rfn": [],
+    "axes": {
+      "wght": [
+        300,
+        300,
+        900
+      ]
+    }
   }
 }

@@ -3,11 +3,11 @@
 import { el, clear, toast } from './ui.js';
 import { state, on, setMode, setName, restore, loadProject, family } from './state.js';
 import { serializeProject, parseProject, FILE_EXTENSION } from '../../shared/project.js';
-import { labView } from './views/lab.js';
+import { atelierView } from './views/atelier.js';
 import { exportView } from './views/export.js';
 
 const MODES = [
-  ['lab', 'Lab', labView],
+  ['atelier', 'Atelier', atelierView],
   ['export', 'Export', exportView],
 ];
 
@@ -58,7 +58,6 @@ async function openProject(file) {
 }
 
 document.getElementById('btn-save').addEventListener('click', saveProject);
-document.getElementById('btn-export').addEventListener('click', () => setMode('export'));
 document.getElementById('btn-open').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', () => { if (fileInput.files[0]) openProject(fileInput.files[0]); fileInput.value = ''; });
 nameInput.addEventListener('input', () => setName(nameInput.value));
@@ -86,7 +85,7 @@ const THEME_KEY = 'typeo.theme';
 
 function setTheme(theme, remember = true) {
   document.documentElement.dataset.theme = theme;
-  themeBtn.textContent = theme === 'dark' ? 'Light' : 'Dark';
+  themeBtn.setAttribute('aria-checked', String(theme === 'dark'));
   themeBtn.setAttribute('aria-label', theme === 'dark' ? 'Switch to light' : 'Switch to dark');
   if (remember) { try { localStorage.setItem(THEME_KEY, theme); } catch { /* private mode */ } }
 }
@@ -110,7 +109,10 @@ const statusPython = document.getElementById('status-python');
 function showProject() {
   const fam = family();
   statusGlyphs.textContent = `${fam.name} · ${fam.genre}`;
-  statusTime.textContent = state.project.look ? `look: ${state.project.look}` : 'custom';
+  const on = state.project.chain.filter((s) => s.on).length;
+  statusTime.textContent = on
+    ? `${on} operator${on > 1 ? 's' : ''} · seed ${state.project.seed}`
+    : 'no operators';
   if (nameInput.value !== state.project.name) nameInput.value = state.project.name;
 }
 

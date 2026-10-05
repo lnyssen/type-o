@@ -26,6 +26,8 @@ const AXIS_LABELS = {
   CASL: { label: 'Casual', hint: 'From linear to brush-written' },
   MONO: { label: 'Monospace', hint: 'Proportional to fixed-width' },
   CRSV: { label: 'Cursive', hint: 'Cursive alternates (a, f, i, l…)' },
+  YEAR: { label: 'Year', hint: 'The letters thin out as the ice does — 1979 is solid, 2050 is barely there' },
+  MORF: { label: 'Morph', hint: 'Reshapes every letter into something else entirely' },
 };
 
 const axis = (tag, min, def, max, step) => ({ tag, min, default: def, max, step: step ?? (max - min <= 2 ? (max - min <= 1 ? 0.01 : 0.1) : 1), ...AXIS_LABELS[tag] });
@@ -126,6 +128,127 @@ export const FAMILIES = [
     credit: 'Caveat Project Authors (Impallari Type)',
     blurb: 'Lively handwriting with natural rhythm.',
     axes: [axis('wght', 400, 400, 700)],
+  },
+  {
+    id: 'worksans', name: "Work Sans", genre: 'Grotesk', italic: true,
+    credit: "The Work Sans Project Authors",
+    blurb: "A workmanlike grotesk with open shapes and a true italic.",
+    axes: [axis('wght', 100, 400, 900)],
+  },
+  {
+    id: 'figtree', name: "Figtree", genre: 'Grotesk', italic: true,
+    credit: "The Figtree Project Authors",
+    blurb: "Friendly geometric grotesk, even colour, large x-height.",
+    axes: [axis('wght', 300, 300, 900)],
+  },
+  {
+    id: 'schibstedgrotesk', name: "Schibsted Grotesk", genre: 'Grotesk', italic: true,
+    credit: "The Schibsted-Grotesk Project Authors",
+    blurb: "Editorial grotesk built for headlines and small print alike.",
+    axes: [axis('wght', 400, 400, 900)],
+  },
+  {
+    id: 'dmsans', name: "DM Sans", genre: 'Grotesk', italic: true,
+    credit: "The DM Sans Project Authors",
+    blurb: "Low-contrast geometric sans with an optical size axis.",
+    axes: [axis('opsz', 9, 9, 40), axis('wght', 100, 400, 1000)],
+  },
+  {
+    id: 'outfit', name: "Outfit", genre: 'Geometric', italic: false,
+    credit: "The Outfit Project Authors",
+    blurb: "Pure geometry: circular bowls, single-storey a, no ornament.",
+    axes: [axis('wght', 100, 100, 900)],
+  },
+  {
+    id: 'sora', name: "Sora", genre: 'Geometric', italic: false,
+    credit: "The Sora Project Authors",
+    blurb: "Technical geometric sans with squared terminals.",
+    axes: [axis('wght', 100, 400, 800)],
+  },
+  {
+    id: 'manrope', name: "Manrope", genre: 'Geometric', italic: false,
+    credit: "The Manrope Project Authors",
+    blurb: "Semi-geometric sans, tight and modern, one weight axis.",
+    axes: [axis('wght', 200, 200, 800)],
+  },
+  {
+    id: 'literata', name: "Literata", genre: 'Serif', italic: true,
+    credit: "The Literata Project Authors",
+    blurb: "A reading serif with a real optical size axis, built for screens.",
+    axes: [axis('opsz', 7, 12, 72), axis('wght', 200, 400, 900)],
+  },
+  {
+    id: 'newsreader', name: "Newsreader", genre: 'Serif', italic: true,
+    credit: "The Newsreader Project Authors",
+    blurb: "Newspaper serif: sturdy at text size, sharp and high-contrast at display.",
+    axes: [axis('wght', 200, 400, 800), axis('opsz', 6, 18, 72)],
+  },
+  {
+    id: 'piazzolla', name: "Piazzolla", genre: 'Serif', italic: true,
+    credit: "The Piazzolla Project Authors",
+    blurb: "Sturdy text serif with an optical size axis and a lively italic.",
+    axes: [axis('wght', 100, 100, 900), axis('opsz', 8, 30, 30)],
+  },
+  {
+    id: 'lora', name: "Lora", genre: 'Serif', italic: true,
+    rfn: ["Lora"],
+    credit: "The Lora Project Authors",
+    blurb: "Contemporary serif with brushed curves and moderate contrast.",
+    axes: [axis('wght', 400, 400, 700)],
+  },
+  {
+    id: 'bricolagegrotesque', name: "Bricolage Grotesque", genre: 'Display', italic: false,
+    credit: "The Bricolage Grotesque Project Authors",
+    blurb: "Deliberately irregular grotesk: width, weight and optical size all move.",
+    axes: [axis('opsz', 12, 96, 96), axis('wght', 200, 800, 800), axis('wdth', 75, 100, 100)],
+  },
+  {
+    id: 'bigshouldersdisplay', name: "Big Shoulders Display", genre: 'Display', italic: false,
+    credit: "The Big Shoulders Project Authors",
+    blurb: "Tall, narrow poster sans — all vertical, almost no shoulder.",
+    axes: [axis('wght', 100, 100, 900)],
+  },
+  {
+    id: 'syne', name: "Syne", genre: 'Display', italic: false,
+    credit: "The Syne Project Authors",
+    blurb: "Art-school display face with wilfully odd proportions.",
+    axes: [axis('wght', 400, 400, 800)],
+  },
+  {
+    id: 'tourney', name: "Tourney", genre: 'Display', italic: true,
+    credit: "The Tourney Project Authors",
+    blurb: "Sports-lettering display with width, weight and slant.",
+    axes: [axis('wght', 100, 100, 900), axis('wdth', 75, 100, 125)],
+  },
+  {
+    id: 'climatecrisis', name: "Climate Crisis", genre: 'Display', italic: false,
+    credit: "The Climate Crisis Project Authors",
+    blurb: "Its single axis is a year: the letters thin out as the ice does.",
+    axes: [axis('YEAR', 1979, 1979, 2050)],
+  },
+  {
+    id: 'kablammo', name: "Kablammo", genre: 'Display', italic: false,
+    credit: "The Kablammo Project Authors",
+    blurb: "A morph axis that reshapes every letter into something else entirely.",
+    axes: [axis('MORF', 0, 0, 60)],
+  },
+  {
+    id: 'gluten', name: "Gluten", genre: 'Casual', italic: false,
+    credit: "The Gluten Project Authors",
+    blurb: "Soft, bouncy and slanted — a face that refuses to sit still.",
+    axes: [axis('wght', 100, 100, 900), axis('slnt', -13, 0, 13)],
+  },
+  {
+    id: 'grandstander', name: "Grandstander", genre: 'Casual', italic: true,
+    credit: "The Grandstander Project Authors",
+    blurb: "Rounded playful sans with a chunky, hand-drawn feel.",
+    axes: [axis('wght', 100, 100, 900)],
+  },
+  {
+    id: 'rubik', name: "Rubik", genre: 'Rounded', italic: true,
+    credit: "The Rubik Project Authors",
+    blurb: "Rounded-corner sans, even and friendly, with a true italic.",
+    axes: [axis('wght', 300, 300, 900)],
   },
 ];
 

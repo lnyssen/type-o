@@ -151,7 +151,7 @@ export const OPERATORS = [
   },
   {
     id: 'ring',
-    name: 'Ring',
+    name: 'Outline',   // the id stays 'ring' so saved projects keep working
     stage: 'surface',
     blurb: 'Keeps only the rim: an outline or an inline face.',
     params: [
@@ -232,6 +232,113 @@ export const OPERATORS = [
         }
       }
       return { ...glyph, contours: union(out) };
+    },
+  },
+  {
+    id: 'mirror',
+    name: 'Mirror',
+    stage: 'cut',
+    blurb: 'Folds the letter onto its own reflection. Symmetry where there was none.',
+    params: [
+      num('axis', 'Axis', 0, 100, 50, { hint: 'Where the fold sits across the letter' }),
+      pick('mode', 'Mode', ['fold', 'keep left', 'keep right'], 'fold'),
+      num('tilt', 'Tilt', -45, 45, 0, { hint: 'Angle of the fold' }),
+    ],
+    apply(glyph, p) {
+      const box = bbox(glyph.contours);
+      if (!box.w) return glyph;
+      const rad = (p.tilt * Math.PI) / 180;
+      const x = box.x0 + (box.w * p.axis) / 100;
+      const cy = (box.y0 + box.y1) / 2;
+      const upright = rotate(glyph.contours, -rad, x, cy);
+      const span = bbox(upright);
+      const half = (left) => intersect(upright, [left
+        ? rect(span.x0 - 1, span.y0 - 1, x, span.y1 + 1)
+        : rect(x, span.y0 - 1, span.x1 + 1, span.y1 + 1)]);
+      const flip = (c) => warp(c, (px, py) => [2 * x - px, py]);
+      const keep = p.mode === 'keep right' ? half(false) : half(true);
+      const out = p.mode === 'fold' ? union(upright, flip(half(true))) : union(keep, flip(keep));
+      return { ...glyph, contours: rotate(out, rad, x, cy) };
+    },
+  },
+  {
+    id: 'rings',
+    name: 'Rings',
+    stage: 'surface',
+    blurb: 'Redraws the letter as contour lines, like a map of its own thickness.',
+    params: [
+      num('step', 'Spacing', 6, 160, 44, { em: true, roll: [14, 90] }),
+      num('weight', 'Weight', 2, 80, 14, { em: true, roll: [5, 34] }),
+      num('count', 'Rings', 1, 12, 5, { roll: [2, 8] }),
+      pick('from', 'From', ['edge', 'centre'], 'edge'),
+    ],
+    apply(glyph, p) {
+      const out = [];
+      for (let i = 0; i < p.count; i++) {
+        const depth = (p.from === 'edge' ? i : p.count - 1 - i) * p.step;
+        const ring = difference(offset(glyph.contours, -depth), offset(glyph.contours, -depth - p.weight));
+        if (!ring.length) break;
+        out.push(...ring);
+      }
+      return { ...glyph, contours: out.length ? union(out) : glyph.contours };
+    },
+  },
+  {
+    id: 'twist',
+    name: 'Twist',
+    stage: 'finish',
+    blurb: 'Turns the letter around itself, more the higher you go.',
+    params: [
+      num('angle', 'Angle', -180, 180, 45, { hint: 'Turn between the foot and the top' }),
+      num('pivot', 'Pivot', 0, 100, 50, { hint: 'The height that stays still' }),
+    ],
+    apply(glyph, p, ctx) {
+      if (!p.angle) return glyph;
+      const box = bbox(glyph.contours);
+      if (!box.h) return glyph;
+      const cx = (box.x0 + box.x1) / 2;
+      const anchor = box.y0 + (box.h * p.pivot) / 100;
+      const k = ((p.angle * Math.PI) / 180) / box.h;
+      return {
+        ...glyph,
+        contours: warp(glyph.contours, (x, y) => {
+          const a = (y - anchor) * k;
+          const s = Math.sin(a), c = Math.cos(a);
+          const dx = x - cx, dy = y - anchor;
+          return [cx + dx * c - dy * s, anchor + dx * s + dy * c];
+        }),
+      };
+    },
+  },
+  {
+    id: 'bulge',
+    name: 'Bulge',
+    stage: 'finish',
+    blurb: 'Pushes the middle out, or sucks it in. A lens held over the letter.',
+    params: [
+      num('amount', 'Amount', -90, 90, 35, { hint: 'Negative pinches instead' }),
+      num('centre', 'Height', 0, 100, 50),
+      num('reach', 'Reach', 20, 200, 100, { hint: 'How far the lens spreads' }),
+    ],
+    apply(glyph, p) {
+      if (!p.amount) return glyph;
+      const box = bbox(glyph.contours);
+      if (!box.w || !box.h) return glyph;
+      const cx = (box.x0 + box.x1) / 2;
+      const cy = box.y0 + (box.h * p.centre) / 100;
+      const radius = (Math.max(box.w, box.h) / 2) * (p.reach / 100);
+      const k = p.amount / 100;
+      return {
+        ...glyph,
+        contours: warp(glyph.contours, (x, y) => {
+          const dx = x - cx, dy = y - cy;
+          const d = Math.hypot(dx, dy);
+          if (d < 1e-6 || d > radius) return [x, y];
+          const t = d / radius;
+          const scale = 1 + k * (1 - t * t);
+          return [cx + dx * scale, cy + dy * scale];
+        }),
+      };
     },
   },
   {

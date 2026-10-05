@@ -5,23 +5,23 @@
 
 :root {
   /* Black and white only. Emphasis is contrast and weight, never hue. */
-  --bg: #ffffff;
-  --bg-2: #fafafa;
-  --surface: #f4f4f4;
-  --surface-2: #ebebeb;
-  --surface-3: #d9d9d9;
-  --line: rgba(0, 0, 0, 0.14);
-  --line-strong: rgba(0, 0, 0, 0.34);
-  --text: #000000;
-  --text-dim: #565656;
-  --text-faint: #8a8a8a;
-  --accent: #000000;          /* the loudest thing available: pure contrast */
-  --accent-hover: #2e2e2e;
-  --accent-soft: rgba(0, 0, 0, 0.07);
-  --accent-text: #000000;
-  --on-accent: #ffffff;
-  --danger: #000000;          /* errors are said with weight and a rule, not red */
-  --ok: #000000;
+  --bg: #f7f6f2;
+  --bg-2: #f2f1ec;
+  --surface: #eceae4;
+  --surface-2: #e3e1d9;
+  --surface-3: #d2cfc5;
+  --line: rgba(21, 20, 15, 0.16);
+  --line-strong: rgba(21, 20, 15, 0.36);
+  --text: #15140f;
+  --text-dim: #57544a;
+  --text-faint: #8b8779;
+  --accent: #15140f;          /* the loudest thing available: pure contrast */
+  --accent-hover: #332f26;
+  --accent-soft: rgba(21, 20, 15, 0.07);
+  --accent-text: #15140f;
+  --on-accent: #f7f6f2;
+  --danger: #15140f;          /* errors are said with weight and a rule, not red */
+  --ok: #15140f;
   --r-pill: 999px;
   --r: 2px;
   --r-sm: 2px;
@@ -29,28 +29,30 @@
   --statusbar: 32px;
   --panel: 348px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --font-text: Satoshi, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-display: "Instrument Serif", Georgia, "Times New Roman", serif;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
   color-scheme: light;
 }
 
 :root[data-theme="dark"] {
-  --bg: #000000;
-  --bg-2: #0a0a0a;
-  --surface: #121212;
-  --surface-2: #1c1c1c;
-  --surface-3: #2e2e2e;
-  --line: rgba(255, 255, 255, 0.16);
-  --line-strong: rgba(255, 255, 255, 0.38);
-  --text: #ffffff;
-  --text-dim: #a8a8a8;
-  --text-faint: #767676;
-  --accent: #ffffff;
-  --accent-hover: #d6d6d6;
-  --accent-soft: rgba(255, 255, 255, 0.1);
-  --accent-text: #ffffff;
-  --on-accent: #000000;
-  --danger: #ffffff;
-  --ok: #ffffff;
+  --bg: #14140f;
+  --bg-2: #1a1a14;
+  --surface: #20201a;
+  --surface-2: #2a2a23;
+  --surface-3: #3d3c33;
+  --line: rgba(243, 241, 234, 0.18);
+  --line-strong: rgba(243, 241, 234, 0.4);
+  --text: #f3f1ea;
+  --text-dim: #a5a295;
+  --text-faint: #75725f;
+  --accent: #f3f1ea;
+  --accent-hover: #d6d3c8;
+  --accent-soft: rgba(243, 241, 234, 0.1);
+  --accent-text: #f3f1ea;
+  --on-accent: #14140f;
+  --danger: #f3f1ea;
+  --ok: #f3f1ea;
   color-scheme: dark;
 }
 
@@ -61,7 +63,7 @@ html, body { height: 100%; margin: 0; }
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: Switzer, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: var(--font-text);
   font-size: 14px;
   line-height: 1.45;
   display: grid;
@@ -88,7 +90,7 @@ a { color: inherit; text-decoration: none; }
 
 .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .mark { width: 26px; height: 26px; flex: none; display: block; }
-.wordmark { font-weight: 700; text-transform: uppercase; letter-spacing: -0.02em; font-size: 16px; }
+.wordmark { font-family: var(--font-display); font-size: 21px; letter-spacing: 0.01em; }
 .project-name {
   min-width: 0; width: 200px;
   background: transparent;
@@ -128,7 +130,22 @@ a { color: inherit; text-decoration: none; }
 .pill-primary:hover { background: var(--accent-hover); color: var(--on-accent); }
 .pill:disabled { opacity: 0.45; cursor: not-allowed; }
 .topbar-actions { display: flex; gap: 4px; align-items: center; justify-content: flex-end; }
-.pill-icon { min-width: 58px; }
+/* A switch, not a button that renames itself. */
+.theme-switch { background: none; border: none; padding: 4px; cursor: pointer; display: flex; align-items: center; }
+.theme-track {
+  width: 42px; height: 22px; border-radius: 999px; position: relative; display: block;
+  border: 1px solid var(--line-strong); background: var(--surface);
+  transition: background 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+.theme-knob {
+  position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--text); transition: transform 0.22s var(--ease);
+}
+.theme-switch[aria-checked="true"] .theme-knob { transform: translateX(20px); }
+/* The knob is a disc in the dark and a ring in the light: the state is legible
+   without colour, and without an icon that needs explaining. */
+.theme-switch[aria-checked="false"] .theme-knob { background: none; box-shadow: inset 0 0 0 2.5px var(--text); }
+.theme-switch:hover .theme-track { border-color: var(--text); }
 
 /* ---------- layout ---------- */
 
@@ -153,10 +170,11 @@ a { color: inherit; text-decoration: none; }
 .stage { overflow: auto; position: relative; background: var(--bg); min-width: 0; scrollbar-width: thin; scrollbar-color: var(--surface-3) transparent; }
 .stage-pad { padding: 28px 36px 64px; min-height: 100%; }
 
-h1, h2, h3 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
-h1 { font-size: clamp(40px, 5vw, 72px); text-transform: uppercase; line-height: 0.9; letter-spacing: -0.045em; }
-h2 { font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-dim); font-weight: 500; }
-h3 { font-size: 13px; }
+/* Instrument Serif carries the voice; Satoshi carries the work. */
+h1, h3 { margin: 0; font-family: var(--font-display); font-weight: 400; }
+h1 { font-size: clamp(46px, 6vw, 88px); line-height: 0.96; letter-spacing: -0.015em; }
+h2 { margin: 0; font-size: 11px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--text-dim); font-weight: 500; }
+h3 { font-size: 21px; letter-spacing: -0.01em; }
 
 .hint { color: var(--text-faint); font-size: 12px; margin: 0; }
 .group { display: flex; flex-direction: column; gap: 12px; }
@@ -279,6 +297,9 @@ textarea { resize: vertical; min-height: 68px; }
 .btn.ghost { border-color: var(--line); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn.small { padding: 6px 12px; font-size: 11px; }
+.btn.wide { width: 100%; }
+.seed-row { align-items: flex-end; gap: 12px; }
+.seed-row .control { flex: 1; min-width: 0; }
 
 /* ---------- design stage ---------- */
 
@@ -533,13 +554,13 @@ textarea { resize: vertical; min-height: 68px; }
 
 .source-pick {
   width: 100%;
-  display: grid; grid-template-columns: 1fr auto; align-items: baseline; gap: 4px 12px;
+  display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 2px 12px;
   background: none; border: 1px solid var(--line); border-radius: var(--r-sm);
   padding: 13px 14px; cursor: pointer; text-align: left;
   transition: border-color 0.15s var(--ease), background 0.15s var(--ease);
 }
 .source-pick:hover { border-color: var(--line-strong); background: var(--surface); }
-.source-pick-name { font-size: 25px; line-height: 1.1; color: var(--text); }
+.source-pick-name { font-size: 25px; line-height: 1.15; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .source-pick-go {
   font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint);
   border-bottom: 1px solid currentColor;

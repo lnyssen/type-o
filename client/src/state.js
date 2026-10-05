@@ -9,7 +9,7 @@ const listeners = new Map();
 
 export const state = {
   project: newProject(),
-  mode: 'lab',
+  mode: 'atelier',
 };
 
 export function on(topic, fn) {

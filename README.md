@@ -75,7 +75,7 @@ Order is the point. Ring after Halftone draws hollow dots; Halftone after Ring s
 
 ## The interface
 
-- **Lab** — `01 Source` (the family and its axes), `02 Chain` (the operator stack: reorder it, mute a step, open one to tune it), `03 Chance` (roll, reseed, and a legibility meter). The stage draws your word live from the real outlines, or the whole alphabet.
+- **Atelier** — `01 Source` (the family in use and its axes), `02 Stack` (the operators: reorder them, mute one, open one to tune it), `03 Random` (roll, reseed, and a legibility meter). The stage draws your word live from the real outlines, the whole alphabet, or every family set in its own letters so you can choose one by reading it.
 - **Export** — name it, pick a format, download it, or load the compiled file straight into the page. You can also save a **specimen sheet** as SVG, or an **animation** as WebM: every setting that has an "off" value ramps from there to yours, so the clip plays the chain coming on. The licence card links to the master's `OFL.txt`, and the recipe panel shows the exact chain and seed.
 
 Projects autosave to the browser and save as `.typeo` files — family, axes, chain, seed and all, so a font can be rebuilt exactly. `Cmd/Ctrl+S` saves, `Cmd/Ctrl+O` opens, `Cmd/Ctrl+E` jumps to Export. Files from before the operators (v2) still open; they just arrive with an empty chain.
@@ -163,7 +163,7 @@ shared/ops/build.js     outlines + chain → the job the builder packs
 shared/ops/render.js    contours → SVG path, and a kerned line of them
 shared/catalog.js       families, axes, labels, looks, naming rules
 shared/project.js       .typeo v3 — family, axes, chain, seed
-client/src/views/lab.js the chain, the stage, the roll
+client/src/views/atelier.js  the stack, the stage, the roll
 client/src/animate.js   records the chain coming on, as WebM
 client/src/outlines.js  one fetch per family + axes, then everything is local
 server/index.js         Express API
@@ -176,7 +176,7 @@ server/masters/<id>/    roman.ttf, italic.ttf, previews, charset.json (downloade
 api/*.py                the same three endpoints as Vercel Python functions
 api/_catalog.json       generated from shared/catalog.js for those functions
 scripts/                setup-masters.mjs, build-catalog-json.mjs, build-vercel.mjs,
-                        lab-specimen.mjs (roll a sheet of chains and look at it)
+                        lab-specimen.mjs (roll a sheet of stacks and look at it)
 test/                   operator invariants, end-to-end builds, Node↔Python parity
 ```
 
