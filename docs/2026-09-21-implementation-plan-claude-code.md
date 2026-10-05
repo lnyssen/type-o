@@ -37,7 +37,7 @@ Inspire from **laurentnyssen.be** — match this exactly:
 - **Metrics Panel:** Auto + manual fine-tuning (kerning pairs, glyph-level, x-height, ascender/descender)
 - **Preview:** Full Latin Extended (200+ glyphs) updating live
 - **Export UI:** Select format (.ttf, .otf, .woff) → download or copy link
-- **Project Management:** Load/save .gentype files (JSON persistence)
+- **Project Management:** Load/save .typeo files (JSON persistence)
 
 ### Layer 2: Generation Engine
 - **Skeleton Morphing:** Parameterize Latin Extended characters from base skeleton
@@ -94,8 +94,8 @@ Inspire from **laurentnyssen.be** — match this exactly:
 
 ### 2.3 Skeleton Persistence
 - [ ] Store skeleton data in memory (array of nodes per glyph)
-- [ ] Save to .gentype project file (JSON format)
-- [ ] Load from .gentype file
+- [ ] Save to .typeo project file (JSON format)
+- [ ] Load from .typeo file
 
 ### 2.4 Glyph Generation Backend
 - [ ] Server endpoint: `/api/generate-glyph` → accepts skeleton JSON
@@ -177,9 +177,9 @@ Inspire from **laurentnyssen.be** — match this exactly:
 
 ---
 
-## 📋 Phase 6: Project Persistence (.gentype Files)
+## 📋 Phase 6: Project Persistence (.typeo Files)
 
-### 6.1 .gentype File Format (JSON)
+### 6.1 .typeo File Format (JSON)
 ```json
 {
   "name": "MyFont",
@@ -211,7 +211,7 @@ Inspire from **laurentnyssen.be** — match this exactly:
 ```
 
 ### 6.2 Save / Load UI
-- [ ] "Save Project" button → file dialog → download .gentype JSON
+- [ ] "Save Project" button → file dialog → download .typeo JSON
 - [ ] "Load Project" button → file input → parse + restore all state
 - [ ] Current project name in header
 
@@ -240,7 +240,7 @@ Inspire from **laurentnyssen.be** — match this exactly:
 - [ ] Parameters: all 8 sliders morph preview in real-time
 - [ ] Export: .ttf, .otf, .woff each generate valid fonts
 - [ ] Open in Adobe, Figma, browser web fonts → renders correctly
-- [ ] Save/load .gentype file → perfect round-trip
+- [ ] Save/load .typeo file → perfect round-trip
 - [ ] Metrics: auto-calc + manual override both work
 
 ---
@@ -255,7 +255,7 @@ Inspire from **laurentnyssen.be** — match this exactly:
 | | Tailwind CSS or vanilla | Responsive layout |
 | **Backend** | Node.js + Express | REST API server |
 | | Python (child_process) | fontTools font building |
-| **Data** | JSON (.gentype) | Project persistence |
+| **Data** | JSON (.typeo) | Project persistence |
 | **Repo** | GitHub | Public, MIT license |
 | **Deployment** | (TBD) | Vercel, Netlify, or self-hosted |
 
@@ -280,7 +280,7 @@ Inspire from **laurentnyssen.be** — match this exactly:
 - [ ] Parameters: all 8 sliders update full preview live
 - [ ] Export: .ttf, .otf, .woff files generate + open correctly in Adobe, Figma, browsers
 - [ ] Metrics: auto-calc + manual override functional
-- [ ] Save/load: .gentype files persist + restore perfectly
+- [ ] Save/load: .typeo files persist + restore perfectly
 - [ ] Performance: preview updates within 100ms of slider change
 - [ ] Code: clean, documented, open-source ready (MIT)
 

@@ -142,7 +142,7 @@ test('edited skeletons replace the defaults', () => {
   assert.ok(A.bbox.xMax - A.bbox.xMin < 200, 'the edited A should be a single stem');
 });
 
-test('projects round-trip through .gentype', () => {
+test('projects round-trip through .typeo', () => {
   const p = newProject('My Face');
   p.params.weight = 77;
   p.metrics.kerning.AV = -50;
@@ -153,7 +153,7 @@ test('projects round-trip through .gentype', () => {
   assert.equal(loaded.params.weight, 77);
   assert.equal(loaded.metrics.kerning.AV, -50);
   assert.deepEqual(loaded.skeletons.A, p.skeletons.A);
-  assert.throws(() => parseProject('{"format":"nope"}'), /Not a GenType project/);
+  assert.throws(() => parseProject('{"format":"nope"}'), /Not a TYPE-O project/);
 });
 
 test('bad input is coerced instead of crashing', () => {
@@ -162,7 +162,7 @@ test('bad input is coerced instead of crashing', () => {
   assert.equal(p.contrast, defaultParams().contrast);
   assert.equal(p.terminals, 'sharp');
   assert.equal(p.seed, 0);
-  const { project: loaded, warnings } = parseProject({ format: 'gentype', skeletons: { A: { strokes: [{ nodes: [{ x: 'x', y: 0 }], joins: [] }] }, Nope: { strokes: [] } } });
+  const { project: loaded, warnings } = parseProject({ format: 'typeo', skeletons: { A: { strokes: [{ nodes: [{ x: 'x', y: 0 }], joins: [] }] }, Nope: { strokes: [] } } });
   assert.equal(Object.keys(loaded.skeletons).length, 0);
   assert.ok(warnings.length >= 1);
 });

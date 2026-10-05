@@ -12,7 +12,7 @@ const out = process.argv[2] || 'specimen.svg';
 const params = JSON.parse(process.argv[3] || '{}');
 
 const ROWS = [
-  { text: 'GenType', size: 120, params: { ...PRESETS['Neo-grotesk'].params, ...params }, metrics: PRESETS['Neo-grotesk'].metrics },
+  { text: 'TYPE-O', size: 120, params: { ...PRESETS['Neo-grotesk'].params, ...params }, metrics: PRESETS['Neo-grotesk'].metrics },
   ...['Geometric', 'Humanist', 'Old style', 'Didone', 'Slab', 'Rounded', 'Italic'].map((name) => ({
     text: `${name} — Hamburgefonts 0123`, size: 58, params: { ...PRESETS[name].params, ...params }, metrics: PRESETS[name].metrics,
   })),

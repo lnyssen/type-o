@@ -4,6 +4,8 @@
 
 *A typo, on purpose.*
 
+**[type-o-lab.vercel.app](https://type-o-lab.vercel.app)** · [source](https://github.com/lnyssen/type-o)
+
 Open-source **generative typography**: take a professionally drawn variable typeface, run its outlines through a stack of destructive operators — fracture, swell, stencil, halftone, melt — and export the result as a real `.ttf`, `.otf`, `.woff` or `.woff2`, with its metrics, its kerning and its accents intact.
 
 Press **Roll** and you get a typeface nobody has. Every curve in it descends from one a type designer drew.

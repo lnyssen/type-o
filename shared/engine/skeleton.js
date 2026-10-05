@@ -13,7 +13,7 @@
 //   cycle     closes the stroke           [w=0.6] stroke width multiplier
 //   [noserif] never grow serifs on this stroke
 // Strokes are separated by ';'. The notation is only an authoring format: the
-// editor, the engine and .gentype files all work on the JSON form.
+// editor, the engine and .typeo files all work on the JSON form.
 
 const TOKEN = /\[([^\]]*)\]|(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)(\{(-?\d+(?:\.\d+)?)\})?(\^)?|--|\.\.|cycle|\S+/g;
 

@@ -1,4 +1,4 @@
-// .gentype project files: a plain JSON document holding everything needed to
+// .typeo project files: a plain JSON document holding everything needed to
 // reproduce a font — parameters, metrics, and any hand-edited skeletons.
 
 import { defaultParams, defaultMetrics, normalizeParams, normalizeMetrics } from './params.js';
@@ -6,11 +6,11 @@ import { validateSkeleton } from './skeleton.js';
 import { skeletonFor } from './font.js';
 
 export const FILE_VERSION = 1;
-export const FILE_EXTENSION = '.gentype';
+export const FILE_EXTENSION = '.typeo';
 
 export function newProject(name = 'Untitled') {
   return {
-    format: 'gentype',
+    format: 'typeo',
     fileVersion: FILE_VERSION,
     name,
     version: '1.0',
@@ -24,7 +24,7 @@ export function newProject(name = 'Untitled') {
 export function serializeProject(project) {
   return JSON.stringify(
     {
-      format: 'gentype',
+      format: 'typeo',
       fileVersion: FILE_VERSION,
       name: project.name,
       version: project.version || '1.0',
@@ -44,9 +44,9 @@ export function serializeProject(project) {
 // `warnings`).
 export function parseProject(input) {
   const data = typeof input === 'string' ? JSON.parse(input) : input;
-  if (!data || typeof data !== 'object') throw new Error('Not a GenType project');
-  if (data.format !== 'gentype') throw new Error('Not a GenType project (missing format marker)');
-  if (Number(data.fileVersion) > FILE_VERSION) throw new Error(`This file was made with a newer version of GenType (v${data.fileVersion})`);
+  if (!data || typeof data !== 'object') throw new Error('Not a TYPE-O project');
+  if (data.format !== 'typeo') throw new Error('Not a TYPE-O project (missing format marker)');
+  if (Number(data.fileVersion) > FILE_VERSION) throw new Error(`This file was made with a newer version of TYPE-O (v${data.fileVersion})`);
 
   const warnings = [];
   const skeletons = {};
@@ -64,7 +64,7 @@ export function parseProject(input) {
   }
 
   const project = {
-    format: 'gentype',
+    format: 'typeo',
     fileVersion: FILE_VERSION,
     name: typeof data.name === 'string' && data.name.trim() ? data.name.trim().slice(0, 64) : 'Untitled',
     version: /^\d+(\.\d+)?$/.test(String(data.version)) ? String(data.version) : '1.0',

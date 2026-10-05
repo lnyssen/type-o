@@ -48,8 +48,7 @@ export function serializeProject(p) {
 // Accepts an object or JSON text; returns a clean project.
 export function parseProject(input) {
   const data = typeof input === 'string' ? JSON.parse(input) : input;
-  // Files saved before the rename say 'gentype'; they are the same format.
-  if (!data || (data.format !== 'typeo' && data.format !== 'gentype')) throw new Error('Not a TYPE-O project');
+  if (!data || data.format !== 'typeo') throw new Error('Not a TYPE-O project');
   if (Number(data.fileVersion) === 1) throw new Error('This project was made with the old skeleton engine and can’t be opened in this version.');
   if (Number(data.fileVersion) > FILE_VERSION) throw new Error('This file was made with a newer version of TYPE-O');
   const family = FAMILY_BY_ID.get(data.family) || FAMILIES[0];
