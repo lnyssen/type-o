@@ -197,7 +197,7 @@ export function exportView() {
           chain().length ? el('span', { class: 'badge' }, `${chain().length} operators`) : null)),
       section('03', 'Build',
         el('button', { class: 'btn primary', onclick: () => compile(true) }, 'Generate & download'),
-        el('button', { class: 'btn ghost', onclick: () => compile(false) }, 'Test the compiled font here'),
+        el('button', { class: 'btn ghost', onclick: () => compile(false) }, 'Test it here'),
         status),
       section('04', 'Also',
         el('button', { class: 'btn ghost', onclick: specimen }, 'Specimen sheet (SVG)'),
