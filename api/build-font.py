@@ -6,9 +6,7 @@ import sys
 # sys.path — so the sibling module has to be made importable first.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from _shared import CATALOG, Refused, json_handler, licence_of  # noqa: F401
-
-import build_font
+from _shared import CATALOG, JsonHandler, Refused, licence_of  # noqa: F401
 
 FORMATS = ("ttf", "otf", "woff", "woff2")
 CONTENT_TYPES = {"ttf": "font/ttf", "otf": "font/otf", "woff": "font/woff", "woff2": "font/woff2"}
@@ -51,6 +49,9 @@ def prepare(body):
 
 
 def run(body):
+    # Imported here, not at module level: see the note in outlines.py.
+    import build_font
+
     data, _info = build_font.build(prepare(body))
     return data
 
@@ -61,8 +62,7 @@ def file_name(body):
     return f"{clean}-{style}.{str(body.get('format') or 'ttf').lower()}"
 
 
-handler = json_handler(
-    run,
-    content_type=lambda body: CONTENT_TYPES.get(str(body.get("format") or "ttf").lower(), "font/ttf"),
-    filename=file_name,
-)
+class handler(JsonHandler):
+    run = staticmethod(run)
+    content_type = staticmethod(lambda body: CONTENT_TYPES.get(str(body.get("format") or "ttf").lower(), "font/ttf"))
+    filename = staticmethod(file_name)

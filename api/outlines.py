@@ -6,12 +6,14 @@ import sys
 # sys.path — so the sibling module has to be made importable first.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from _shared import CATALOG, Refused, json_handler, master_path  # noqa: F401
-
-import outline_font
+from _shared import CATALOG, JsonHandler, Refused, master_path  # noqa: F401
 
 
 def run(body):
+    # server/python/ arrives with the function at runtime, not while Vercel is
+    # analysing this module to find `handler`: import it only when called.
+    import outline_font
+
     family = str(body.get("family") or "")
     if family not in CATALOG:
         raise Refused(f"Unknown family “{family[:40]}”")
@@ -30,4 +32,5 @@ def run(body):
     return outline_font.extract(master, axes, chars, tolerance)
 
 
-handler = json_handler(run)
+class handler(JsonHandler):
+    run = staticmethod(run)

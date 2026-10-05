@@ -1,3 +1,4 @@
-# Dependencies of the Vercel Python function (api/export-font.py).
+# Dependencies of the Vercel Python functions (api/*.py).
 # Local development uses server/python/requirements.txt in server/.venv.
 fonttools[woff]>=4.50
+skia-pathops>=0.8   # removeOverlaps: masters stack contours, and Clipper winds holes the other way
