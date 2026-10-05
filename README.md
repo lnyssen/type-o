@@ -20,11 +20,11 @@ So the master is the *material*, not the product. The letterforms, the spacing a
 
 ```bash
 npm install
-npm run setup          # fontTools in server/.venv + the masters (≈18 MB)
+npm run setup:python   # fontTools + skia-pathops in server/.venv
 npm run dev            # API on :5188, interface on http://localhost:3000
 ```
 
-`npm run setup` is `setup:python` then `setup:masters`; run them separately if you prefer. The masters are downloaded from [google/fonts](https://github.com/google/fonts) and are **not** in this repository — only their `OFL.txt` and `METADATA.pb` are.
+The masters are already in the repository, so there is nothing to download. `npm run setup:masters` exists for adding a family, and `scripts/add-family.mjs` pulls one from [google/fonts](https://github.com/google/fonts) and reads its axes out of the font itself.
 
 Production:
 
@@ -118,14 +118,14 @@ and the character sets are static; `/api/outlines`, `/api/build-font` and
 `server/python/` code the local server runs.
 
 ```bash
-npm run setup:masters   # the deployment carries the masters; it will not build without them
-vercel deploy --prod
+git push                # the GitHub integration builds and deploys
+vercel deploy --prod    # or straight from here
 ```
 
-`.vercelignore` replaces `.gitignore` for the upload, which is how the 18 MB of
-variable masters reach the function — they are not in git. If you deploy from a
-Git integration instead of the CLI, commit them first (`git add -f
-server/masters`), otherwise the build stops with a list of what is missing.
+The masters are in the repository — 39 MB of OFL fonts, which is what the
+licence is for. They have to be: a build from GitHub has nothing else to read,
+and it stops with a list of what is missing rather than shipping a broken
+catalogue. `npm run setup:masters` only needs running when a family is added.
 
 `api/export-font.py` is the serverless twin of `server/index.js`: it validates
 the project, picks the master and calls the same `instance_font.py`. It cannot

@@ -6,12 +6,9 @@ __pycache__/
 *.log
 tmp/
 
-# Variable masters are downloaded from github.com/google/fonts (OFL); keep only
-# their licences and metadata in git. `npm run setup:masters` rebuilds the rest,
-# and .vercelignore lets them through to a deployment.
-server/masters/*/*.ttf
-server/masters/*/*.woff2
-server/masters/*/charset.json
+# The variable masters live in git. They are OFL, so redistributing them is
+# what the licence is for, and a deployment from GitHub cannot build without
+# them — `npm run setup:masters` only has to run when a family is added.
 .vercel
 .env*
 

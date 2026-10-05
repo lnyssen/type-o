@@ -1,5 +1,5 @@
-# Vercel replaces .gitignore with this file, which is how the variable masters
-# (gitignored, 18 MB) reach the deployment. Keep them listed nowhere here.
+# Vercel uses this instead of .gitignore when the CLI uploads a build. The
+# masters must not be listed here: the build stops without them.
 .git
 node_modules
 dist
